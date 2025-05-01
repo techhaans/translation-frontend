@@ -1,63 +1,88 @@
 .logincontainer {
-    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .loginbox {
-    background-color: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-    width: 350px;
-  }
-  
-  .logintitle {
-    text-align: center;
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #2563eb;
-  }
-  
-  .logininput {
-    width: 100%;
-    padding: 10px;
-    margin-top: 9px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
-  }
-  
-  .loginselect {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-  }
-  
-  .loginbutton {
-    width: 100%;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #3b82f6;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    cursor: pointer;
-  }
-  
-  .loginbutton:hover {
-    background-color: #701c4c;
-  }
-  
-  .errortext {
-    color: red;
-    margin-top: 10px;
-    font-size: 14px;
-  }
-  
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loginbox {
+  background-color: #f9f9f9;
+  padding: 50px 40px;
+  border-radius: 12px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+}
+
+.logintitle {
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #000;
+}
+
+.logininput,
+.loginselect {
+  width: 100%;
+  padding: 12px 14px;
+  margin: 10px 0;
+  font-size: 16px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background: transparent;
+  transition: border-color 0.3s;
+}
+
+.logininput:focus,
+.loginselect:focus {
+  outline: none;
+  border-color: #4e54c8;
+}
+
+.loginselect {
+  appearance: none;
+  background-color: transparent;
+}
+
+.loginbutton {
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  background: linear-gradient(to right, #36d1dc, #5b86e5);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.loginbutton:hover {
+  opacity: 0.9;
+}
+
+.forgot {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 14px;
+  color: #555;
+}
+
+.forgot a {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.signup {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #333;
+}
+
+.signup a {
+  color: #1a73e8;
+  text-decoration: none;
+}

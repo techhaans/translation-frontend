@@ -1,0 +1,91 @@
+/* General form container */
+form {
+  max-width: 450px;
+  margin: 50px auto;
+  padding: 30px 40px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Arial', sans-serif;
+  transition: all 0.3s ease;
+}
+
+/* Title styling */
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Form input fields */
+form input,
+form select {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Focus effect on input fields */
+form input:focus,
+form select:focus {
+  border-color: #007bff;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.25);
+  outline: none;
+}
+
+/* Select field styling */
+form select {
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+/* Button styling */
+form button {
+  width: 100%;
+  padding: 14px;
+  background-color: #28a745;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #218838;
+}
+
+/* Optional: Styling for the link text */
+.signup {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.signup a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signup a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Design for smaller screens */
+@media (max-width: 500px) {
+  form {
+    padding: 20px 15px;
+    margin: 20px;
+  }
+}
