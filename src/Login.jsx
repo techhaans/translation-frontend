@@ -53,6 +53,8 @@ const Login = () => {
           <option value="PROOFREADER">Proofreader</option>
           <option value="ADMIN">Admin</option>
           <option value="SUPERADMIN">Superadmin</option>
+          <option value="CUSTOMER">Customer</option>
+
         </select>
         {error && <p className={Style.errortext}>{error}</p>}
         <button className={Style.loginbutton} onClick={handleLogin}>Login</button>
