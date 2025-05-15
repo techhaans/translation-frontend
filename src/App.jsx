@@ -1,65 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useContext } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+import Footer from "./components/Footer/Footer";
+import NavBar from "./components/NavBar/NavBar";
+import NavBarAfterLogin from "./components/NavBarAfterLogin/NavBarAfterLogin";
+import ContactUs from "./pages/ContactUs/ContactUs";
+import Home from "./pages/Home/Home";
+import ProductInfo from "./pages/ProductInfo/ProductInfo";
+import Products from "./pages/Products/Products";
 import Login from './Login';
-import Home from './Home';
-import Labels from './Labels';
+import StripeBackground from "./components/StripeBackground/StripeBackground";
 import RegisterCustomerForm from './RegisterCustomerForm';
-import RegisterProofreaderForm from './RegisterProofreaderForm';
+import { AuthContext } from "./AuthContext";
+import Dashboard from './components/Dashboard/Dashboard';
+import CustomerProfile from './components/CustomerProfile/CustomerProfile';
+import LanguageConfiguration from './components/LanguageConfiguration/LanguageConfiguration';
+import LabelManagement from './components/LabelManagement/LabelManagement';
+import Integrations from './components/Integrations/Integrations';
 
-const App = () => {
-  const [authenticated, setAuthenticated] = useState(false);
+function App() {
+    const { isLoggedIn } = useContext(AuthContext);
 
-  // Checking if the user is authenticated
-  useEffect(() => {
-    const user = localStorage.getItem('user'); // You could replace this with your own authentication logic
-    if (user) {
-      setAuthenticated(true);
-    }
-  }, []);
-
-  return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Login />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/RegisterCustomerForm" element={<RegisterCustomerForm />} />
-        <Route path="/RegisterProofreaderForm" element={<RegisterProofreaderForm />} />
-        <Route path="home/Labels" element={<Labels/>} />
-
-       
-      </Routes>
-    </Router>
-  );
-};
+    return (
+        <BrowserRouter>
+            {isLoggedIn ? <NavBarAfterLogin /> : <NavBar />}
+            <React.Suspense fallback={<div>Loading...</div>}>
+                <Routes>
+                    <Route index element={<Home />} />
+                    <Route path='/' element={<Home />} />
+                    <Route path='/login' element={<Login />} />
+                    <Route path='/RegisterCustomerForm' element={<RegisterCustomerForm />} />
+                    <Route path='/Contact' element={<ContactUs />} />
+                    <Route path='/Products' element={<Products />} />
+                    <Route path='/ProductInfo' element={<ProductInfo />} />
+                    <Route path='/StripeBackground' element={<StripeBackground />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/CustomerProfile" element={<CustomerProfile />} />
+                    <Route path="/LanguageConfiguration" element={<LanguageConfiguration />} />
+                    <Route path="/LabelManagement" element={<LabelManagement />} />
+                    <Route path="/Integrations" element={<Integrations />} />
+                    <Route
+                        path='*'
+                        element={
+                            <div
+                                style={{ height: "80vh", fontSize: "28px", fontWeight: "600" }}
+                                className='d-flex justify-content-center align-items-center'
+                            >
+                                Page Not Found
+                            </div>
+                        }
+                    />
+                </Routes>
+            </React.Suspense>
+            <Footer />
+        </BrowserRouter>
+    );
+}
 
 export default App;
-
-
-
-
-
-// import React, { useState } from 'react';
-// import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-// import Login from './Login';
-// import Home from './Home'
-// import Labels from './Labels';
-// import RegisterCustomerForm from './RegisterCustomerForm';
-// import RegisterProofreaderForm from './RegisterProofreaderForm';
-
-
-
-// const App = () => (
-//   <Router>
-//     <Routes>
-//       <Route path="/" element={<Login />} />
-//       <Route path="/home" element={<Home />} />
-//       <Route path="/labels" element={<Labels/>}/>
-//       <Route path="/RegisterCustomerForm" element={<RegisterCustomerForm/>}/>
-//       <Route path="/RegisterProofreaderForm" element={<RegisterProofreaderForm/>}/>
-
-//     </Routes>
-//   </Router>
-// );
-// export default App;  
