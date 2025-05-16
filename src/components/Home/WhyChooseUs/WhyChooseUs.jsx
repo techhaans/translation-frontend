@@ -21,20 +21,7 @@ const WhyChooseUs = () => {
                             />
                         </div>
                         <div className={styles.content}>
-                            Unique, Safe and effective products.
-                        </div>
-                    </div>
-                    <div className={styles.card}>
-                        <div className={styles.imgwrapper}>
-                            <img
-                                src={whychooseus2}
-                                alt=''
-                                height={100}
-                                className={`img-fluid ${styles.img}`}
-                            />
-                        </div>
-                        <div className={styles.content}>
-                            Multi Utility products helping reduce Inventory Costs.
+                            Unique, Fast and effective products.
                         </div>
                     </div>
                     <div className={styles.card}>
@@ -47,7 +34,20 @@ const WhyChooseUs = () => {
                             />
                         </div>
                         <div className={styles.content}>
-                            Clean with care without side effects on surfaces & humans.
+                            Multi language support helping reduce Inventory Costs.
+                        </div>
+                    </div>
+                    <div className={styles.card}>
+                        <div className={styles.imgwrapper}>
+                            <img
+                                src={whychooseus1}
+                                alt=''
+                                height={100}
+                                className={`img-fluid ${styles.img}`}
+                            />
+                        </div>
+                        <div className={styles.content}>
+                            Connect Github, Gitlab, Bitbucket, Wix, Shopify etc and translate with Zero coding.
                         </div>
                     </div>
                     <div className={styles.card}>
@@ -60,7 +60,7 @@ const WhyChooseUs = () => {
                             />
                         </div>
                         <div className={styles.content}>
-                            Save Water with our waterless cleaning solutions.
+                            Handles any languages or framework with ease.
                         </div>
                     </div>
                 </div>

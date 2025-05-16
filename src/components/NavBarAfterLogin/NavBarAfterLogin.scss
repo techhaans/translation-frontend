@@ -1,7 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap");
 
+
+
 .header {
-    background-image: url('../../assests/CoverPage_Carsousel3.png');
+    //background-image: url('../../assests/CoverPage_Carsousel3.png');
     position: relative;
     font-size: 1em;
     box-sizing: border-box;
@@ -66,7 +68,7 @@
                 .nav-link {
                     font-size: 1em;
                     text-decoration: none;
-                    color: white;
+                    color: #ac1414;
                     &:hover {
                         color: rgba(23, 181, 226, 1);
                     }
@@ -194,5 +196,5 @@
     }
 }
 .username-text {
-    color: white;
+    color: #ac1414;
 }

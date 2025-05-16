@@ -17,6 +17,8 @@ import CustomerProfile from './components/CustomerProfile/CustomerProfile';
 import LanguageConfiguration from './components/LanguageConfiguration/LanguageConfiguration';
 import LabelManagement from './components/LabelManagement/LabelManagement';
 import Integrations from './components/Integrations/Integrations';
+import RegisterCustomer from "./pages/RegisterCustomer/RegisterCustomerForm";
+import RegisterProofreaderForm from "./pages/RegisterProofreaderForm/RegisterProofreaderForm";
 
 function App() {
     const { isLoggedIn } = useContext(AuthContext);
@@ -29,7 +31,8 @@ function App() {
                     <Route index element={<Home />} />
                     <Route path='/' element={<Home />} />
                     <Route path='/login' element={<Login />} />
-                    <Route path='/RegisterCustomerForm' element={<RegisterCustomerForm />} />
+                    <Route path='/RegisterCustomerForm' element={<RegisterCustomer />} />
+                    <Route path='/RegisterProofreaderForm' element={<RegisterProofreaderForm />} />
                     <Route path='/Contact' element={<ContactUs />} />
                     <Route path='/Products' element={<Products />} />
                     <Route path='/ProductInfo' element={<ProductInfo />} />

@@ -1,0 +1,102 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&display=swap");
+
+.RegisterProofreader {
+    font-family: "Sora", sans-serif;
+    padding: 0 10%;
+    background-image: url("../../assests/contactbg.png");
+    background-color: #cccccc;
+    background-size: cover;
+    font-size: 16px;
+
+    @media (max-width: 576px) {
+        padding: 0 1em;
+        font-size: 14px;
+    }
+
+    .centerContent {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        form {
+            background-color: white;
+            border-radius: 25px;
+            padding: 2em 4em;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            margin: 2em 0;
+
+            .heading {
+                font-size: 1.6em;
+                font-weight: 700;
+                margin-bottom: 1em;
+            }
+
+            label {
+                font-weight: 600;
+                margin-bottom: 0.3em;
+                margin-top: 1em;
+            }
+
+            input,
+            select {
+                margin-bottom: 1.5em;
+                padding: 10px;
+                border-radius: 8px;
+                border: 1px solid #d1d1d1;
+                width: 100%;
+
+                &::placeholder {
+                    color: #9c9c9c;
+                }
+            }
+
+            select[multiple] {
+                height: 120px;
+            }
+
+            .checkboxWrapper {
+                display: flex;
+                align-items: center;
+                margin-bottom: 1em;
+
+                input[type="checkbox"] {
+                    margin-right: 0.5em;
+                }
+
+                a {
+                    color: #17b5e2;
+                    text-decoration: none;
+                }
+            }
+
+            .submitBtn {
+                background-color: #17b5e2;
+                color: white;
+                border: none;
+                border-radius: 12px;
+                padding: 1em;
+                font-size: 1.1em;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 1em;
+            }
+
+            .loginLink {
+                margin-top: 1.5em;
+                font-size: 0.9em;
+                text-align: center;
+
+                a {
+                    color: #17b5e2;
+                    text-decoration: none;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}

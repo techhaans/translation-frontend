@@ -145,18 +145,12 @@ const Footer = () => {
                         />
                     </span>
                     <div className='d-flex flex-column gap-1'>
-                        <div className={styles.question}>Factory</div>
-                        <div className={`${styles.answer}`}>
-                            Factory K-211, 2nd Floor,Ansa Industrial Estate,
-                            Saki Vihar Road, Saki Naka, Andheri (East), Mumbai
-                            400072
-                        </div>
+
                     </div>
                     <div className='d-flex flex-column gap-1'>
                         <div className={styles.question}>Communications</div>
                         <div className={styles.answer}>
-                            Communications 76/78, Nagdevi Street, Ground Floor,
-                            Mumbai 400003
+                            Visakhapatnam, Andhra Pradesh, India, 531002
                         </div>
                     </div>
                 </div>
@@ -229,7 +223,7 @@ const Footer = () => {
                                     }}
                                 >
                                     <div className={styles.accordionBtn}>
-                                        CX 18, 51
+                                        TechHaans Translations
                                     </div>
                                 </Link>
 
@@ -240,9 +234,7 @@ const Footer = () => {
                                         color: "inherit",
                                     }}
                                 >
-                                    <div className={styles.accordionBtn}>
-                                        CX 69,45,96
-                                    </div>
+
                                 </Link>
 
                                 <Link
@@ -252,9 +244,7 @@ const Footer = () => {
                                         color: "inherit",
                                     }}
                                 >
-                                    <div className={styles.accordionBtn}>
-                                        CX Handwash
-                                    </div>
+
                                 </Link>
 
                                 <Link
@@ -264,9 +254,7 @@ const Footer = () => {
                                         color: "inherit",
                                     }}
                                 >
-                                    <div className={styles.accordionBtn}>
-                                        CX Dishwash
-                                    </div>
+
                                 </Link>
 
                                 <Link
@@ -276,9 +264,7 @@ const Footer = () => {
                                         color: "inherit",
                                     }}
                                 >
-                                    <div className={styles.accordionBtn}>
-                                        CX Detergent
-                                    </div>
+
                                 </Link>
                             </div>
                         </div>
@@ -289,11 +275,11 @@ const Footer = () => {
                 >
                     <div className='d-flex flex-column gap-1'>
                         <div className={styles.question}>Phone</div>
-                        <div className={styles.answer}>+91 (22) 40900000</div>
+                        <div className={styles.answer}>+91 8919677400</div>
                     </div>
                     <div className='d-flex flex-column gap-1'>
                         <div className={styles.question}>E-Mail</div>
-                        <div className={styles.answer}>Sales@ecocleanx.in</div>
+                        <div className={styles.answer}>info@techhaans.com</div>
                     </div>
                     <div className='d-flex flex-row gap-4 align-items-center'>
                         <img
@@ -319,7 +305,7 @@ const Footer = () => {
             </div>
             <div className={styles.hr}></div>
             <div className={styles.copyright}>
-                Copyright © 2023 • Ecocleanx • All Rights Reserved
+                Copyright © 2024 • TechHaans • All Rights Reserved
             </div>
         </div>
     );

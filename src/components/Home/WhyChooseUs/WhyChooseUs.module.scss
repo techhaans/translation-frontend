@@ -3,11 +3,7 @@
 .WhyChooseUs {
     display: flex;
     flex-direction: column;
-    background: linear-gradient(
-        180deg,
-        #def8ff 0%,
-        rgba(244, 244, 244, 0) 100%
-    );
+    background: #bbb9e3;
     margin: 4em 0;
     @media (min-width: 1441px) {
         font-size: 18px;

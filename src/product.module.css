@@ -1,4 +1,5 @@
 .logincontainer {
+  background-image: url("../src/assests/contactbg.png");
   height: 100vh;
   display: flex;
   justify-content: center;

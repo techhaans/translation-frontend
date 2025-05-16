@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./NavBar.scss";
-import logo from "../../assests/logo.png";
+import logo from "../../assests/logo.jpeg";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const NavBar = () => {
@@ -8,7 +8,7 @@ const NavBar = () => {
     const navigate = useNavigate();
     return (
         <>
-            <header className='header'>
+            <header className='header animated-css-bgm'>
                 <nav
                     className={`navbar g-0 d-flex justify-content-between align-items-center`}
                 >
@@ -44,6 +44,15 @@ const NavBar = () => {
                                 className='nav-link'
                             >
                                 Products
+                            </NavLink>
+                        </li>
+                        <li className='nav-item'>
+                            <NavLink
+                                to='/Products'
+                                onClick={() => setShow(false)}
+                                className='nav-link'
+                            >
+                                Pricing
                             </NavLink>
                         </li>
                         <li className='nav-item'>

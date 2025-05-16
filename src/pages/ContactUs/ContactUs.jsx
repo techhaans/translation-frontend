@@ -34,7 +34,7 @@ const ContactUs = () => {
                     action='https://formsubmit.co/divyamsharma822@gmail.com'
                     method='POST'
                 >
-                    <div className={styles.heading}>Submit your details.</div>
+                    <div className={styles.heading}>Submit your details for any queries.</div>
                     <label htmlFor='fullName'>Full Name</label>
                     <input
                         id='fullName'
