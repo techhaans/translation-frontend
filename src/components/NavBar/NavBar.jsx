@@ -48,7 +48,7 @@ const NavBar = () => {
                         </li>
                         <li className='nav-item'>
                             <NavLink
-                                to='/Products'
+                                to='/Pricing'
                                 onClick={() => setShow(false)}
                                 className='nav-link'
                             >

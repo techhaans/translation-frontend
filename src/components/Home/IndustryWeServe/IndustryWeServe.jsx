@@ -50,14 +50,23 @@ const IndustryWeServe = () => {
     return (
         <div className='IndustryWeServe'>
             <div className='centerContent'>
-                <div className='heading'>Industries we serve</div>
+                <div className='heading'>Product Features</div>
                 <div className='content'>
-                    Our cleaning products are specifically formulated for use in
-                    industrial settings. They are highly effective and
-                    environment friendly. making them a responsible choice for
-                    any business. Whether you need to clean machinery, floors,
-                    surfaces, or any other type of equipment, we have a product
-                    that can get the job done.
+                    <span>👉  AI-powered translation with zero coding
+                    Let your team translate content effortlessly — no developer time needed.</span>
+
+                    <br/>
+                    👉 Fast, reliable, and low-cost
+                    Optimize your localization pipeline without breaking the bank.
+                    <br/>
+                    👉 Supports multiple languages at scale
+                    Grow globally with built-in support for all your target markets.
+                    <br/>
+                    👉 Seamless setup with free onboarding
+                    Get started in minutes — no complex integration required.
+                    <br/>
+                    👉 Flexible plans for startups to enterprises
+                    Whether you're testing the waters or scaling fast, we’ve got you covered.
                 </div>
                 <Swiper
                     onSwiper={(swiper) => setSwiperRef(swiper)}
@@ -73,11 +82,11 @@ const IndustryWeServe = () => {
                     className='mySwiper'
                 >
                     {[
-                        { img: IndustryWeServe_Img1, name: "Government" },
-                        { img: IndustryWeServe_Img2, name: "Automotive" },
-                        { img: IndustryWeServe_Img3, name: "Railways" },
-                        { img: IndustryWeServe_Img4, name: "Hospitality" },
-                        { img: IndustryWeServe_Img5, name: "Textile" },
+                        { img: IndustryWeServe_Img1, name: "GitHub, GitLab, Bitbucket Integration" },
+                        { img: IndustryWeServe_Img2, name: "Shopify, Wix, WooCommerce & More" },
+                        { img: IndustryWeServe_Img3, name: "iOS, Android, Web — Any Tech Stack" },
+                        { img: IndustryWeServe_Img4, name: "No-Code Setup" },
+                        { img: IndustryWeServe_Img5, name: "Real-Time Sync & Updates" },
                     ].map((curr, index) => (
                         <SwiperSlide key={index}>
                             <div className='row g-0 slide ms-1'>

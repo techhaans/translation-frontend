@@ -21,7 +21,7 @@ const WhyChooseUs = () => {
                             />
                         </div>
                         <div className={styles.content}>
-                            Unique, Fast and effective products.
+                            Zero coding, Unique, Fast and effective products.
                         </div>
                     </div>
                     <div className={styles.card}>

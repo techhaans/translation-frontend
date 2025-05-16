@@ -16,7 +16,7 @@ const Home = () => {
             <WhyChooseUs />
             <IndustryWeServe />
             <OurProducts />
-            <BeforeAfter />
+
             <FAQ />
         </div>
     );

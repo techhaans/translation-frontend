@@ -19,6 +19,7 @@ import LabelManagement from './components/LabelManagement/LabelManagement';
 import Integrations from './components/Integrations/Integrations';
 import RegisterCustomer from "./pages/RegisterCustomer/RegisterCustomerForm";
 import RegisterProofreaderForm from "./pages/RegisterProofreaderForm/RegisterProofreaderForm";
+import Pricing from "./pages/Pricing/Pricing";
 
 function App() {
     const { isLoggedIn } = useContext(AuthContext);
@@ -42,6 +43,7 @@ function App() {
                     <Route path="/LanguageConfiguration" element={<LanguageConfiguration />} />
                     <Route path="/LabelManagement" element={<LabelManagement />} />
                     <Route path="/Integrations" element={<Integrations />} />
+                    <Route path="/Pricing" element={<Pricing />} />
                     <Route
                         path='*'
                         element={
