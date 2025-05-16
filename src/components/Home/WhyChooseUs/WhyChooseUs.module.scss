@@ -3,7 +3,7 @@
 .WhyChooseUs {
     display: flex;
     flex-direction: column;
-    background: #bbb9e3;
+    background: black;
     margin: 4em 0;
     @media (min-width: 1441px) {
         font-size: 18px;
@@ -30,6 +30,7 @@
             margin: 2em 0;
             font-weight: 700;
             text-align: center;
+            color: white;
         }
 
         .cards {
