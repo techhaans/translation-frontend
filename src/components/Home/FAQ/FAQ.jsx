@@ -11,29 +11,24 @@ const FAQ = () => {
 
                 {[
                     {
-                        question:
-                            "1 .   What is the best way to store cleaning products?",
-                        answer: "It is generally recommended to store cleaning products in a cool, dry place, out of reach of children and pets. Some products may also need to be stored in a well-ventilated area, away from heat sources or flames.",
+                        question: "1. How do I get started with website localization?",
+                        answer: "Start by registering an account and logging into the back office. From there, select your target languages, set a default, download the integration script, and add it to your project. Once done, run the script to see your translated website live.",
                     },
                     {
-                        question:
-                            "2 .  Can I mix different cleaning products together?",
-                        answer: "It is generally recommended to store cleaning products in a cool, dry place, out of reach of children and pets. Some products may also need to be stored in a well-ventilated area, away from heat sources or flames.",
+                        question: "2. Do I need to manually translate my content?",
+                        answer: "No manual work is needed. After setting up your repository or platform (e.g., GitHub, Bitbucket, Shopify), simply click the translate button and your site will automatically be translated.",
                     },
                     {
-                        question:
-                            "3 .   How do I choose the best cleaning product for a specific surface?",
-                        answer: "It is generally recommended to store cleaning products in a cool, dry place, out of reach of children and pets. Some products may also need to be stored in a well-ventilated area, away from heat sources or flames.",
+                        question: "3. What platforms are supported for integration?",
+                        answer: "We support multiple platforms including GitHub, Bitbucket, GitLab, Shopify, Wix, and more. You just need to provide your repository details to get started.",
                     },
                     {
-                        question:
-                            "4 .  Are natural or organic cleaning products better?",
-                        answer: "It is generally recommended to store cleaning products in a cool, dry place, out of reach of children and pets. Some products may also need to be stored in a well-ventilated area, away from heat sources or flames.",
+                        question: "4. What is included in the free plan?",
+                        answer: "The free plan includes setup, translation of up to 1,000 labels, support for 3 languages, and is valid for 30 days. After that, you can choose to upgrade for extended features.",
                     },
                     {
-                        question:
-                            "5 .  Are natural or organic cleaning products better?",
-                        answer: "It is generally recommended to store cleaning products in a cool, dry place, out of reach of children and pets. Some products may also need to be stored in a well-ventilated area, away from heat sources or flames.",
+                        question: "5. Can I upgrade later to a paid plan?",
+                        answer: "Yes, once your free plan expires or if your label or language needs exceed the limit, you can upgrade to a Basic or Business plan directly from your dashboard."
                     },
                 ].map((curr, index) => (
                     <motion.span

@@ -31,7 +31,7 @@ const NavBar = () => {
                         <li className='nav-item'>
                             <NavLink
                                 to='/'
-                                className={({ isActive }) => `nav-link ${isActive ? "activenav" : ""}`}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                                 onClick={() => setShow(false)}
                             >
                                 Home
@@ -41,7 +41,7 @@ const NavBar = () => {
                             <NavLink
                                 to='/Products'
                                 onClick={() => setShow(false)}
-                                className={({ isActive }) => `nav-link ${isActive ? "activenav" : ""}`}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                             >
                                 Products
                             </NavLink>
@@ -50,25 +50,17 @@ const NavBar = () => {
                             <NavLink
                                 to='/Pricing'
                                 onClick={() => setShow(false)}
-                                className={({ isActive }) => `nav-link ${isActive ? "activenav" : ""}`}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                             >
                                 Pricing
                             </NavLink>
                         </li>
+
                         <li className='nav-item'>
                             <NavLink
-                                to='/Solutions'
+                                to='/AboutUs'
                                 onClick={() => setShow(false)}
-                                className={({ isActive }) => `nav-link ${isActive ? "activenav" : ""}`}
-                            >
-                                Solutions
-                            </NavLink>
-                        </li>
-                        <li className='nav-item'>
-                            <NavLink
-                                to='/AboutUS'
-                                onClick={() => setShow(false)}
-                                className={({ isActive }) => `nav-link ${isActive ? "activenav" : ""}`}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                             >
                                 About Us
                             </NavLink>
@@ -77,9 +69,18 @@ const NavBar = () => {
                             <NavLink
                                 to='/Contact'
                                 onClick={() => setShow(false)}
-                                className={({ isActive }) => `nav-link ${isActive ? "activenav" : ""}`}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                             >
                                 Contact Us
+                            </NavLink>
+                        </li>
+                        <li className='nav-item'>
+                            <NavLink
+                                to='/Careers'
+                                onClick={() => setShow(false)}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
+                            >
+                                Careers
                             </NavLink>
                         </li>
 

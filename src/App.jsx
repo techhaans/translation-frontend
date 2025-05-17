@@ -21,6 +21,8 @@ import RegisterCustomer from "./pages/RegisterCustomer/RegisterCustomerForm";
 import RegisterProofreaderForm from "./pages/RegisterProofreaderForm/RegisterProofreaderForm";
 import Pricing from "./pages/Pricing/Pricing";
 import Demo from "./pages/Demo/Demo";
+import AboutUs from "./pages/AboutUs/AboutUs";
+import Careers from "./pages/Careers/Careers";
 
 function App() {
     const { isLoggedIn } = useContext(AuthContext);
@@ -46,6 +48,8 @@ function App() {
                     <Route path="/Integrations" element={<Integrations />} />
                     <Route path="/Pricing" element={<Pricing />} />
                     <Route path="/Demo" element={<Demo />} />
+                    <Route path="/AboutUs" element={<AboutUs />} />
+                    <Route path="/Careers" element={<Careers />} />
                     <Route
                         path='*'
                         element={
