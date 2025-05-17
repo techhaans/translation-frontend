@@ -31,7 +31,7 @@ const CoverPage = () => {
                             style={{ color: "black" }}
                         >
                            your language{" "}
-                            <span style={{ color: "white" }}>-Digitally -Fluently</span>
+                            <span style={{ color: "white" }}>-Digitally</span>
                         </div>
                     </div>
                 )}

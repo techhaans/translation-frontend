@@ -117,6 +117,24 @@
         }
     }
 }
+
+.nav-link {
+    font-size: 1em;
+    text-decoration: none;
+    color: white;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: rgba(23, 181, 226, 1);
+    }
+}
+
+.activenav {
+    color: rgba(23, 181, 226, 1) !important;
+    border-bottom: 2px solid rgba(23, 181, 226, 1); // Optional: visual cue
+    font-weight: 600;
+}
+
 .nav-buttons {
     display: flex;
     align-items: center;
