@@ -282,24 +282,27 @@ const Footer = () => {
                         <div className={styles.answer}>info@techhaans.com</div>
                     </div>
                     <div className='d-flex flex-row gap-4 align-items-center'>
-                        <img
-                            src={FacebookLogo}
-                            alt='facebook'
-                            width={30}
-                            className='img-fluid'
-                        />
-                        <img
-                            src={LinkedInLogo}
-                            alt='facebook'
-                            width={30}
-                            className='img-fluid'
-                        />
-                        <img
-                            src={YoutubeLogo}
-                            alt='facebook'
-                            width={30}
-                            className='img-fluid'
-                        />
+                        <a
+                            href="https://www.facebook.com/yourpage"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img src={FacebookLogo} alt='Facebook' width={30} className='img-fluid'/>
+                        </a>
+                        <a
+                            href="https://www.linkedin.com/company/yourcompany"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img src={LinkedInLogo} alt='LinkedIn' width={30} className='img-fluid'/>
+                        </a>
+                        <a
+                            href="https://www.youtube.com/@TechHaans"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <img src={YoutubeLogo} alt='YouTube' width={30} className='img-fluid'/>
+                        </a>
                     </div>
                 </div>
             </div>
