@@ -23,13 +23,30 @@ import Pricing from "./pages/Pricing/Pricing";
 import Demo from "./pages/Demo/Demo";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import Careers from "./pages/Careers/Careers";
+import ProofreadersIntro from "./pages/ProofreadersIntro/ProofreadersIntro";
 
 function App() {
-    const { isLoggedIn } = useContext(AuthContext);
+    const { isLoggedIn, userRole } = useContext(AuthContext);
+    const renderNavBar = () => {
+        console.log(isLoggedIn)
+        if (!isLoggedIn) return <NavBar />;
+        switch (userRole) {
+            case 'ADMIN':
+                return <NavBarAfterLogin />;
+            /*case 'proofreader':
+                return <NavBarProofreader />;
+            case 'admin':
+                return <NavBarAdmin />;
+            case 'superadmin':
+                return <NavBarSuperAdmin />;*/
+            default:
+                return <NavBar />; // fallback
+        }
+    };
 
     return (
         <BrowserRouter>
-            {isLoggedIn ? <NavBarAfterLogin /> : <NavBar />}
+            {renderNavBar()}
             <React.Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                     <Route index element={<Home />} />
@@ -50,6 +67,7 @@ function App() {
                     <Route path="/Demo" element={<Demo />} />
                     <Route path="/AboutUs" element={<AboutUs />} />
                     <Route path="/Careers" element={<Careers />} />
+                    <Route path="/ProofreadersIntro" element={<ProofreadersIntro />} />
                     <Route
                         path='*'
                         element={

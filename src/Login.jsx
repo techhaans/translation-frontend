@@ -2,28 +2,53 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Style from './product.module.css';
-import { AuthContext } from './AuthContext'; // ✅ import context
+import { AuthContext } from './AuthContext';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // ✅ get login function from context
+  const { login } = useContext(AuthContext);
+
+  const validateForm = () => {
+    if (!email) {
+      setError('Email is required');
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Enter a valid email address');
+      return false;
+    }
+
+    if (!password) {
+      setError('Password is required');
+      return false;
+    }
+
+    if (!role) {
+      setError('Please select a role');
+      return false;
+    }
+
+    setError('');
+    return true;
+  };
 
   const handleLogin = async () => {
+    if (!validateForm()) return;
+
     try {
       const response = await axios.post('http://localhost:8082/api/auth/login', {
-        name: username,
+        email,
         password,
         role
       });
 
-      // ✅ Save login state using context
       login(response.data);
-
-      // ✅ Navigate after setting login state
       navigate('/');
     } catch (err) {
       console.error('Login failed:', err);
@@ -35,13 +60,15 @@ const Login = () => {
       <div className={Style.logincontainer}>
         <div className={Style.loginbox}>
           <h2 className={Style.logintitle}>Login</h2>
+
           <input
-              type="text"
+              type="email"
               className={Style.logininput}
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
           />
+
           <input
               type="password"
               className={Style.logininput}
@@ -49,6 +76,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
           />
+
           <select
               className={Style.loginselect}
               value={role}
@@ -60,8 +88,12 @@ const Login = () => {
             <option value="SUPERADMIN">Superadmin</option>
             <option value="CUSTOMER">Customer</option>
           </select>
+
+          {/* 🔴 Show validation error in red */}
           {error && <p className={Style.errortext}>{error}</p>}
+
           <button className={Style.loginbutton} onClick={handleLogin}>Login</button>
+
           <div className={Style.signup}>
             Don’t have an account? <a href="/RegisterCustomerForm">Sign up</a>
           </div>

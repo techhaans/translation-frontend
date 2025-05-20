@@ -6,6 +6,13 @@
   align-items: center;
 }
 
+.errortext {
+  color: red;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+
 .loginbox {
   background-color: #f9f9f9;
   padding: 50px 40px;

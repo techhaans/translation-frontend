@@ -7,6 +7,7 @@
     background-color: #cccccc;
     background-size: cover;
     font-size: 16px;
+
     @media (min-width: 1441px) {
         font-size: 18px;
     }
@@ -19,15 +20,11 @@
     }
 
     .centerContent {
-        // border: 2px solid black;
         max-width: 1440px;
-        margin: 0 auto 0 auto;
+        margin: 0 auto;
         display: flex;
         justify-content: center;
         align-items: center;
-        @media (max-width: 576px) {
-            margin: 0em auto 0 auto;
-        }
 
         form {
             margin: 2em 1em;
@@ -38,8 +35,9 @@
             width: 600px;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+
             @media (max-width: 576px) {
-                margin: 2em 1em;
                 padding: 4em 2em;
             }
 
@@ -48,6 +46,7 @@
                 font-weight: 700;
                 font-family: "Sora", sans-serif;
                 margin-bottom: 2em;
+                text-align: center;
             }
 
             label {
@@ -57,19 +56,19 @@
                 margin-bottom: 0.3em;
             }
 
-            input {
-                margin-bottom: 2em;
+            input,
+            textarea {
+                margin-bottom: 1em;
                 border: 1px solid #d1d1d1;
                 border-radius: 8px;
                 width: 100%;
                 padding: 10px;
-                @media (max-width: 576px) {
-                    margin-bottom: 1em;
-                }
+                font-family: "Sora", sans-serif;
+                font-size: 1em;
+                resize: none;
 
                 &::placeholder {
                     color: #9c9c9c;
-                    padding: 10px 0;
                 }
             }
 
@@ -79,23 +78,8 @@
                 margin: 0;
             }
 
-            /* Firefox */
             input[type="number"] {
                 -moz-appearance: textfield;
-            }
-
-            textarea {
-                margin-bottom: 1em;
-                border: 1px solid #d1d1d1;
-                border-radius: 8px;
-                width: 100%;
-                padding: 10px;
-                resize: none;
-
-                &::placeholder {
-                    color: #9c9c9c;
-                    padding: 0;
-                }
             }
 
             .submitBtn {
@@ -108,12 +92,34 @@
                 font-weight: 600;
                 font-family: "Sora", sans-serif;
                 margin-top: 1em;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+
+                &:hover {
+                    background-color: #0d9cc2;
+                }
             }
 
             .error {
-                color: red;
-                margin-top: -1em;
+                color: #d8000c;
+                background-color: #ffd2d2;
+                padding: 0.5em;
+                border-radius: 6px;
                 margin-bottom: 1em;
+                font-size: 0.9em;
+                font-family: "Sora", sans-serif;
+            }
+
+            .successMessage {
+                color: #4f8a10;
+                background-color: #dff2bf;
+                border: 1px solid #4f8a10;
+                padding: 1em;
+                border-radius: 8px;
+                margin-bottom: 1em;
+                font-size: 1em;
+                font-family: "Sora", sans-serif;
+                text-align: center;
             }
         }
     }

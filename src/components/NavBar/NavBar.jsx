@@ -55,14 +55,22 @@ const NavBar = () => {
                                 Pricing
                             </NavLink>
                         </li>
-
                         <li className='nav-item'>
                             <NavLink
-                                to='/AboutUs'
+                                to='/ProofReadersIntro'
                                 onClick={() => setShow(false)}
                                 className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                             >
-                                About Us
+                                ProofReaders
+                            </NavLink>
+                        </li>
+                        <li className='nav-item'>
+                            <NavLink
+                                to='/Careers'
+                                onClick={() => setShow(false)}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
+                            >
+                                Careers
                             </NavLink>
                         </li>
                         <li className='nav-item'>
@@ -76,14 +84,13 @@ const NavBar = () => {
                         </li>
                         <li className='nav-item'>
                             <NavLink
-                                to='/Careers'
+                                to='/AboutUs'
                                 onClick={() => setShow(false)}
                                 className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                             >
-                                Careers
+                                About Us
                             </NavLink>
                         </li>
-
                     </ul>
 
                     <div className="nav-buttons">

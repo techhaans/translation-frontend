@@ -35,6 +35,11 @@
         font-weight: 700;
       }
 
+      .label {
+        font-size: 0.9em;
+        margin-bottom: 1em;
+      }
+
       label {
         font-weight: 600;
         margin-bottom: 0.3em;
@@ -76,6 +81,20 @@
           text-decoration: none;
           font-weight: 500;
         }
+      }
+
+      .error {
+        color: red;
+        font-size: 0.85em;
+        margin-top: -1em;
+        margin-bottom: 1em;
+      }
+
+      .success {
+        color: green;
+        font-weight: 600;
+        margin-bottom: 1em;
+        font-size: 0.95em;
       }
     }
   }
