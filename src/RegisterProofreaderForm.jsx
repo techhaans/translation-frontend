@@ -41,7 +41,7 @@ const RegisterProofreaderForm = () => {
         role: 'PROOFREADER'
       };
 
-      const userResponse = await fetch('http://localhost:8082/user/register', {
+      const userResponse = await fetch('http://13.232.167.179:8082/user/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userPayload)
@@ -63,7 +63,7 @@ const RegisterProofreaderForm = () => {
         username: form.username
       };
 
-      const proofreaderResponse = await fetch('http://localhost:8082/proof/register-proofreader', {
+      const proofreaderResponse = await fetch('http://13.232.167.179:8082/proof/register-proofreader', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(proofreaderPayload)
@@ -190,7 +190,7 @@ export default RegisterProofreaderForm;
 //     console.log('Sending data:', form);
 
 //     try {
-//       const response = await fetch('http://localhost:8082/proof/register-proofreader', {
+//       const response = await fetch('http://13.232.167.179:8082/proof/register-proofreader', {
 //         method: 'POST',
 //         headers: { 'Content-Type': 'application/json' },
 //         body: JSON.stringify(form)

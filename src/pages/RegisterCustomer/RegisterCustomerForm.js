@@ -68,7 +68,7 @@ const RegisterCustomerForm = () => {
                 };
 
                 const registerRes = await axios.post(
-                    "http://localhost:8082/api/auth/register/customer",
+                    "http://13.232.167.179:8082/api/auth/register/customer",
                     payload
                 );
 
@@ -80,7 +80,7 @@ const RegisterCustomerForm = () => {
 
                     // Call login API after successful registration
                     const loginRes = await axios.post(
-                        "http://localhost:8082/api/auth/login",
+                        "http://13.232.167.179:8082/api/auth/login",
                         {
                             email: values.email,
                             password: values.password,

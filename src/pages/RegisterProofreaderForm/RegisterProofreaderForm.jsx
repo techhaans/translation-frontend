@@ -55,7 +55,7 @@ const RegisterProofReaderForm = () => {
                 values.supportedLanguages.forEach(lang => formData.append("supportedLanguages", lang));
 
                 const registerRes = await axios.post(
-                    "http://localhost:8082/api/auth/register/proofreader",
+                    "http://13.232.167.179:8082/api/auth/register/proofreader",
                     formData,
                     {
                         headers: {
@@ -67,7 +67,7 @@ const RegisterProofReaderForm = () => {
                 if (registerRes.data.status === "SUCCESS") {
                     setSuccessMessage("Registration successful! Logging you in...");
 
-                    const loginRes = await axios.post("http://localhost:8082/api/auth/login", {
+                    const loginRes = await axios.post("http://13.232.167.179:8082/api/auth/login", {
                         email: values.email,
                         password: values.password,
                         role: "PROOFREADER",
