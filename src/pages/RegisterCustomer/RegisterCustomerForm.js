@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import axios from "axios";
 import styles from "./RegisterCustomer.module.scss";
+import { AuthContext } from '../../AuthContext';
 
 const RegisterCustomerForm = () => {
     const [countries, setCountries] = useState([]);
@@ -11,24 +12,33 @@ const RegisterCustomerForm = () => {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
+    const { login } = useContext(AuthContext);
 
     useEffect(() => {
         setCountries(["India", "USA", "UK"]);
-        setMembershipTypes(["Basic", "Premium", "Enterprise"]);
+        setMembershipTypes([
+            { id: 1, name: "TRIAL" },
+            { id: 2, name: "BASIC_MONTHLY" },
+            { id: 3, name: "BUSINESS_MONTHLY" },
+            { id: 3, name: "BASIC_YEARLY" },
+            { id: 3, name: "BASIC_YEARLY" }
+        ]);
     }, []);
 
     const formik = useFormik({
         initialValues: {
-            cname: "",
-            country: "",
-            membershipType: "",
-            name: "",
+            fullName: "",
+            email: "",
             password: "",
-            confirmPassword: "", // ✅ Added
+            confirmPassword: "",
+            country: "",
+            membershipId: "",
+            companyName: "",
+            phoneNumber: "",
         },
         validationSchema: Yup.object({
-            cname: Yup.string().required("Customer name is required"),
-            name: Yup.string().required("Username is required"),
+            fullName: Yup.string().required("Full name is required"),
+            email: Yup.string().email("Invalid email").required("Email is required"),
             password: Yup.string()
                 .required("Password is required")
                 .min(8, "Password must be at least 8 characters")
@@ -36,32 +46,76 @@ const RegisterCustomerForm = () => {
                 .matches(/\d/, "Must include at least one number"),
             confirmPassword: Yup.string()
                 .required("Please confirm your password")
-                .oneOf([Yup.ref("password"), null], "Passwords must match"), // ✅ Match check
+                .oneOf([Yup.ref("password"), null], "Passwords must match"),
             country: Yup.string().required("Country is required"),
-            membershipType: Yup.string().required("Membership type is required"),
+            membershipId: Yup.string().required("Membership is required"),
+            companyName: Yup.string().required("Company name is required"),
+            phoneNumber: Yup.string().required("Phone number is required"),
         }),
         onSubmit: async (values) => {
-            // ... submission code remains unchanged
+            try {
+                const payload = {
+                    email: values.email,
+                    password: values.password,
+                    fullName: values.fullName,
+                    phoneNumber: values.phoneNumber,
+                    country: values.country,
+                    membershipId: Number(values.membershipId),
+                    companyName: values.companyName,
+                    planExpiryDate: "2025-05-22",
+                    registrationDate: "2026-05-22",
+                    accountStatus: "ACTIVE",
+                };
+
+                const registerRes = await axios.post(
+                    "http://localhost:8082/api/auth/register/customer",
+                    payload
+                );
+
+                if (
+                    registerRes.data.status === "SUCCESS" &&
+                    registerRes.data.message.includes("Customer registered successfully")
+                ) {
+                    setSuccessMessage("Registration successful! Logging you in...");
+
+                    // Call login API after successful registration
+                    const loginRes = await axios.post(
+                        "http://localhost:8082/api/auth/login",
+                        {
+                            email: values.email,
+                            password: values.password,
+                            role: "CUSTOMER",
+                        }
+                    );
+
+                    const { token, fullName, email, role, userId } = loginRes.data.data;
+
+                    localStorage.setItem("token", token);
+                    localStorage.setItem("fullName", fullName);
+                    localStorage.setItem("email", email);
+                    localStorage.setItem("role", role);
+                    localStorage.setItem("userId", userId);
+
+                    login({
+                        token,
+                        fullName,
+                        email,
+                        role,
+                        userId,
+                    });
+
+                    navigate("/");
+                } else {
+                    setErrorMessage("Registration failed.");
+                }
+            } catch (err) {
+                console.error("Registration or login error:", err);
+                setErrorMessage(
+                    err.response?.data?.message || "Registration failed. Try again."
+                );
+            }
         },
     });
-
-    const handleLogin = async (username, password) => {
-        try {
-            const response = await axios.post("http://localhost:8082/api/auth/login", {
-                name: username,
-                password,
-                role: "CUSTOMER",
-            });
-
-            // Assuming login() is available via context
-            // login(response.data);
-
-            navigate("/login");
-        } catch (err) {
-            console.error("Login failed:", err);
-            setErrorMessage("Login failed after registration.");
-        }
-    };
 
     return (
         <div className={styles.RegisterCustomer}>
@@ -75,50 +129,82 @@ const RegisterCustomerForm = () => {
                     {successMessage && <div className={styles.success}>{successMessage}</div>}
                     {errorMessage && <div className={styles.error}>{errorMessage}</div>}
 
-                    <label htmlFor="cname">Customer Name</label>
+                    <label htmlFor="fullName">Full Name</label>
                     <input
-                        name="cname"
+                        name="fullName"
                         type="text"
+                        value={formik.values.fullName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
                         placeholder="Enter your full name"
-                        value={formik.values.cname}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
                     />
-                    {formik.touched.cname && formik.errors.cname && <div className={styles.error}>{formik.errors.cname}</div>}
+                    {formik.touched.fullName && formik.errors.fullName && (
+                        <div className={styles.error}>{formik.errors.fullName}</div>
+                    )}
 
-                    <label htmlFor="name">Username</label>
+                    <label htmlFor="email">Email</label>
                     <input
-                        name="name"
-                        type="text"
-                        placeholder="Choose a username"
-                        value={formik.values.name}
+                        name="email"
+                        type="email"
+                        value={formik.values.email}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
+                        placeholder="Enter your email"
                     />
-                    {formik.touched.name && formik.errors.name && <div className={styles.error}>{formik.errors.name}</div>}
+                    {formik.touched.email && formik.errors.email && (
+                        <div className={styles.error}>{formik.errors.email}</div>
+                    )}
 
                     <label htmlFor="password">Password</label>
                     <input
                         name="password"
                         type="password"
-                        placeholder="Enter a password"
+                        placeholder="Create a password"
                         value={formik.values.password}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                     />
-                    {formik.touched.password && formik.errors.password && <div className={styles.error}>{formik.errors.password}</div>}
+                    {formik.touched.password && formik.errors.password && (
+                        <div className={styles.error}>{formik.errors.password}</div>
+                    )}
 
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input
                         name="confirmPassword"
                         type="password"
-                        placeholder="Re-enter your password"
+                        placeholder="Confirm your password"
                         value={formik.values.confirmPassword}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                     />
                     {formik.touched.confirmPassword && formik.errors.confirmPassword && (
                         <div className={styles.error}>{formik.errors.confirmPassword}</div>
+                    )}
+
+                    <label htmlFor="phoneNumber">Phone Number</label>
+                    <input
+                        name="phoneNumber"
+                        type="text"
+                        value={formik.values.phoneNumber}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        placeholder="Enter your phone number"
+                    />
+                    {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+                        <div className={styles.error}>{formik.errors.phoneNumber}</div>
+                    )}
+
+                    <label htmlFor="companyName">Company Name</label>
+                    <input
+                        name="companyName"
+                        type="text"
+                        value={formik.values.companyName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        placeholder="Enter company name"
+                    />
+                    {formik.touched.companyName && formik.errors.companyName && (
+                        <div className={styles.error}>{formik.errors.companyName}</div>
                     )}
 
                     <label htmlFor="country">Country</label>
@@ -135,23 +221,27 @@ const RegisterCustomerForm = () => {
                             </option>
                         ))}
                     </select>
-                    {formik.touched.country && formik.errors.country && <div className={styles.error}>{formik.errors.country}</div>}
+                    {formik.touched.country && formik.errors.country && (
+                        <div className={styles.error}>{formik.errors.country}</div>
+                    )}
 
-                    <label htmlFor="membershipType">Membership Type</label>
+                    <label htmlFor="membershipId">Membership Type</label>
                     <select
-                        name="membershipType"
-                        value={formik.values.membershipType}
+                        name="membershipId"
+                        value={formik.values.membershipId}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                     >
                         <option value="">Select Membership</option>
                         {membershipTypes.map((m) => (
-                            <option key={m} value={m}>
-                                {m}
+                            <option key={m.id} value={m.id}>
+                                {m.name}
                             </option>
                         ))}
                     </select>
-                    {formik.touched.membershipType && formik.errors.membershipType && <div className={styles.error}>{formik.errors.membershipType}</div>}
+                    {formik.touched.membershipId && formik.errors.membershipId && (
+                        <div className={styles.error}>{formik.errors.membershipId}</div>
+                    )}
 
                     <button type="submit" className={styles.submitBtn}>
                         Register

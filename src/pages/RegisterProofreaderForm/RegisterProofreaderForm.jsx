@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import styles from "./proofreader.register.module.css";
 
-const RegisterProofreaderForm = () => {
-    const [languageOptions, setLanguageOptions] = useState([]);
-
-    useEffect(() => {
-        setLanguageOptions(["English", "French", "German", "Spanish"]);
-    }, []);
+const RegisterProofReaderForm = () => {
+    const navigate = useNavigate();
+    const [successMessage, setSuccessMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const formik = useFormik({
         initialValues: {
@@ -16,12 +16,12 @@ const RegisterProofreaderForm = () => {
             email: "",
             password: "",
             confirmPassword: "",
-            phone: "",
-            languages: [],
-            experience: "",
-            availability: "",
+            phoneNumber: "",
             resume: null,
+            yearsOfExperience: "",
+            supportedLanguages: [],
             termsAccepted: false,
+            availability: "Available"
         },
         validationSchema: Yup.object({
             fullName: Yup.string().required("Full name is required"),
@@ -29,153 +29,163 @@ const RegisterProofreaderForm = () => {
             password: Yup.string()
                 .required("Password is required")
                 .min(8, "Password must be at least 8 characters")
-                .matches(/\d/, "Password must contain a number")
-                .matches(/[^a-zA-Z0-9]/, "Password must contain a special character"),
+                .matches(/[^a-zA-Z0-9]/, "Must include at least one special character")
+                .matches(/\d/, "Must include at least one number"),
             confirmPassword: Yup.string()
-                .oneOf([Yup.ref("password"), null], "Passwords must match")
-                .required("Please confirm your password"),
-            phone: Yup.string().required("Phone number is required"),
-            languages: Yup.array().min(1, "Select at least one language"),
-            experience: Yup.number()
-                .typeError("Must be a number")
-                .min(0, "Must be 0 or more")
-                .required("Experience is required"),
-            availability: Yup.string().required("Availability is required"),
-            termsAccepted: Yup.boolean()
-                .oneOf([true], "You must accept the terms and conditions"),
+                .required("Please confirm your password")
+                .oneOf([Yup.ref("password"), null], "Passwords must match"),
+            phoneNumber: Yup.string().required("Phone number is required"),
+            resume: Yup.mixed().required("Resume is required"),
+            yearsOfExperience: Yup.number().required("Experience is required"),
+            supportedLanguages: Yup.array().min(1, "Select at least one language"),
+            termsAccepted: Yup.boolean().oneOf([true], "You must accept the terms")
         }),
-        onSubmit: (values) => {
-            console.log("Submitting Proofreader:", values);
-            alert("Form submitted successfully!");
+        onSubmit: async (values) => {
+            try {
+                const formData = new FormData();
+                formData.append("fullName", values.fullName);
+                formData.append("email", values.email);
+                formData.append("password", values.password);
+                formData.append("confirmPassword", values.confirmPassword);
+                formData.append("phoneNumber", values.phoneNumber);
+                formData.append("resume", values.resume);
+                formData.append("yearsOfExperience", values.yearsOfExperience);
+                formData.append("availability", values.availability);
+                formData.append("termsAccepted", values.termsAccepted);
+                values.supportedLanguages.forEach(lang => formData.append("supportedLanguages", lang));
+
+                const registerRes = await axios.post(
+                    "http://localhost:8082/api/auth/register/proofreader",
+                    formData,
+                    {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        },
+                    }
+                );
+
+                if (registerRes.data.status === "SUCCESS") {
+                    setSuccessMessage("Registration successful! Logging you in...");
+
+                    const loginRes = await axios.post("http://localhost:8082/api/auth/login", {
+                        email: values.email,
+                        password: values.password,
+                        role: "PROOFREADER",
+                    });
+
+                    const { token, fullName, email, role, userId } = loginRes.data.data;
+
+                    localStorage.setItem("token", token);
+                    localStorage.setItem("fullName", fullName);
+                    localStorage.setItem("email", email);
+                    localStorage.setItem("role", role);
+                    localStorage.setItem("userId", userId);
+
+                    navigate("/");
+                } else {
+                    setErrorMessage("Registration failed.");
+                }
+            } catch (err) {
+                setErrorMessage(err.response?.data?.message || "Registration failed. Try again.");
+            }
         },
     });
 
+    const languageOptions = ["English", "Telugu", "Hindi", "Spanish", "French"];
+
     return (
-        <div className="RegisterCustomer_RegisterCustomer__USkAG">
-            <div className="RegisterCustomer_centerContent__GJuNz">
+        <div className={styles.RegisterProofReader}>
+            <div className={styles.centerContent}>
                 <form onSubmit={formik.handleSubmit}>
-                    <div className="RegisterCustomer_heading__QYZ8w">Create Your Proof Reader Account</div>
+                    <h2>Register as a Proofreader</h2>
+
                     <div className={styles.label}>
                         or <a href="/RegisterCustomerForm">Create Customer Account</a>
                     </div>
 
-                    <label htmlFor="fullName">Full Name</label>
+                    {successMessage && <div className={styles.success}>{successMessage}</div>}
+                    {errorMessage && <div className={styles.error}>{errorMessage}</div>}
+
+                    <label>Full Name</label>
                     <input
                         name="fullName"
                         type="text"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
                         value={formik.values.fullName}
-                        placeholder="Enter your full name"
+                        onChange={formik.handleChange}
                     />
-                    {formik.touched.fullName && formik.errors.fullName &&
-                        <div className={styles.error}>{formik.errors.fullName}</div>}
 
-                    <label htmlFor="email">Email</label>
+                    <label>Email</label>
                     <input
                         name="email"
                         type="email"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
                         value={formik.values.email}
-                        placeholder="Enter your email"
+                        onChange={formik.handleChange}
                     />
-                    {formik.touched.email && formik.errors.email &&
-                        <div className={styles.error}>{formik.errors.email}</div>}
 
-                    <label htmlFor="password">Password</label>
+                    <label>Password</label>
                     <input
                         name="password"
                         type="password"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
                         value={formik.values.password}
-                        placeholder="Enter your password"
+                        onChange={formik.handleChange}
                     />
-                    {formik.touched.password && formik.errors.password &&
-                        <div className={styles.error}>{formik.errors.password}</div>}
 
-                    <label htmlFor="confirmPassword">Confirm Password</label>
+                    <label>Confirm Password</label>
                     <input
                         name="confirmPassword"
                         type="password"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
                         value={formik.values.confirmPassword}
-                        placeholder="Re-enter your password"
-                    />
-                    {formik.touched.confirmPassword && formik.errors.confirmPassword &&
-                        <div className={styles.error}>{formik.errors.confirmPassword}</div>}
-
-                    <label htmlFor="phone">Phone Number</label>
-                    <input
-                        name="phone"
-                        type="tel"
                         onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.phone}
-                        placeholder="Enter your phone number"
                     />
-                    {formik.touched.phone && formik.errors.phone &&
-                        <div className={styles.error}>{formik.errors.phone}</div>}
 
-                    <label htmlFor="languages">Languages You Can Proofread</label>
-                    <select
-                        name="languages"
-                        multiple
-                        value={formik.values.languages}
-                        onChange={(e) => {
-                            const selected = Array.from(e.target.selectedOptions, (o) => o.value);
-                            formik.setFieldValue("languages", selected);
-                        }}
-                        onBlur={formik.handleBlur}
-                    >
-                        {languageOptions.map((lang) => (
-                            <option key={lang} value={lang}>
-                                {lang}
-                            </option>
-                        ))}
-                    </select>
-                    {formik.touched.languages && formik.errors.languages &&
-                        <div className={styles.error}>{formik.errors.languages}</div>}
-
-                    <label htmlFor="experience">Years of Experience</label>
+                    <label>Phone Number</label>
                     <input
-                        name="experience"
-                        type="number"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.experience}
-                        placeholder="e.g., 5"
-                    />
-                    {formik.touched.experience && formik.errors.experience &&
-                        <div className={styles.error}>{formik.errors.experience}</div>}
-
-                    <label htmlFor="availability">Availability (hrs/week, timezone)</label>
-                    <input
-                        name="availability"
+                        name="phoneNumber"
                         type="text"
+                        value={formik.values.phoneNumber}
                         onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.availability}
-                        placeholder="e.g., 20 hrs/week, GMT+5:30"
                     />
-                    {formik.touched.availability && formik.errors.availability &&
-                        <div className={styles.error}>{formik.errors.availability}</div>}
 
-                    <label htmlFor="resume">Upload Resume (optional)</label>
+                    <label>Years of Experience</label>
+                    <input
+                        name="yearsOfExperience"
+                        type="number"
+                        value={formik.values.yearsOfExperience}
+                        onChange={formik.handleChange}
+                    />
+
+                    <label>Resume (docx/pdf)</label>
                     <input
                         name="resume"
                         type="file"
-                        accept=".pdf,.doc,.docx"
                         onChange={(event) => formik.setFieldValue("resume", event.currentTarget.files[0])}
                     />
 
+                    <label>Supported Languages (select multiple)</label>
+                    <select
+                        name="supportedLanguages"
+                        multiple
+                        value={formik.values.supportedLanguages}
+                        onChange={(e) => {
+                            const options = Array.from(e.target.selectedOptions, option => option.value);
+                            formik.setFieldValue("supportedLanguages", options);
+                        }}
+                    >
+                        {languageOptions.map((lang) => (
+                            <option key={lang} value={lang}>{lang}</option>
+                        ))}
+                    </select>
 
+                    <label>
+                        <input
+                            type="checkbox"
+                            name="termsAccepted"
+                            checked={formik.values.termsAccepted}
+                            onChange={formik.handleChange}
+                        /> I accept the terms and conditions
+                    </label>
 
-                    <button type="submit" className={styles.submitBtn}>
-                        Register
-                    </button>
+                    <button type="submit" className={styles.submitBtn}>Register</button>
 
                     <p className={styles.loginLink}>
                         Already have an account? <a href="/login">Login here</a>
@@ -186,4 +196,4 @@ const RegisterProofreaderForm = () => {
     );
 };
 
-export default RegisterProofreaderForm;
+export default RegisterProofReaderForm;

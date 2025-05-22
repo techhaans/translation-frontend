@@ -6,10 +6,10 @@ const ProductDescription = () => {
         <div className={styles.container}>
             {/* Section 1: YouTube Video */}
             <div className={styles.videoSection}>
-                <h2>See How TechHaahns Translations Works</h2>
+                <h2>Haans Translations Demo</h2>
                 <div className={styles.videoWrapper}>
                     <iframe
-                        src="https://www.youtube.com/embed/BoaHHUUPXyg"
+                        src="https://www.youtube.com/embed/d1Uomgo4dAI"
                         title="TechHaahns Product Demo"
                         style={{
                             border: '4px solid gold',

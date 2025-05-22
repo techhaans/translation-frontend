@@ -4,6 +4,7 @@ import whychooseus1 from "../../../assests/whychooseus1.png";
 import whychooseus2 from "../../../assests/whychooseus2.png";
 import whychooseus3 from "../../../assests/whychooseus3.png";
 import whychooseus4 from "../../../assests/whychooseus4.png";
+import whychooseus_zero from "../../../assests/whychooseus_zero.png";
 
 const WhyChooseUs = () => {
     return (
@@ -14,7 +15,7 @@ const WhyChooseUs = () => {
                     <div className={styles.card}>
                         <div className={styles.imgwrapper}>
                             <img
-                                src={whychooseus1}
+                                src={whychooseus_zero}
                                 alt=''
                                 height={100}
                                 className={`img-fluid ${styles.img}`}

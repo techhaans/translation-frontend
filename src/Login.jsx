@@ -45,14 +45,36 @@ const Login = () => {
       const response = await axios.post('http://localhost:8082/api/auth/login', {
         email,
         password,
-        role
+        role,
       });
 
-      login(response.data);
+      const { token, fullName, email: userEmail, role: userRole, userId } = response.data.data;
+
+      // Store in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('fullName', fullName);
+      localStorage.setItem('email', userEmail);
+      localStorage.setItem('role', userRole);
+      localStorage.setItem('userId', userId);
+
+      // Update global auth state
+      login({
+        token,
+        fullName,
+        email: userEmail,
+        role: userRole,
+        userId,
+      });
+
       navigate('/');
     } catch (err) {
       console.error('Login failed:', err);
-      setError('Invalid credentials');
+
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError('Invalid credentials or server error');
+      }
     }
   };
 
@@ -89,7 +111,6 @@ const Login = () => {
             <option value="CUSTOMER">Customer</option>
           </select>
 
-          {/* 🔴 Show validation error in red */}
           {error && <p className={Style.errortext}>{error}</p>}
 
           <button className={Style.loginbutton} onClick={handleLogin}>Login</button>

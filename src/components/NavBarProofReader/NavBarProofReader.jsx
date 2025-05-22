@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import "./NavBarAfterLogin.scss";
+import "./NavBarProofReader.scss";
 import logo from "../../assests/logo.jpeg";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../AuthContext";
@@ -13,7 +13,7 @@ const NavBarAfterLogin = () => {
     console.log(userName); // "Maria Garcia" or undefined if no user
     const handleLogout = () => {
         logout();
-        navigate("/Login");
+        navigate("/");
     };
 
     return (
@@ -27,26 +27,6 @@ const NavBarAfterLogin = () => {
                     <li className="nav-item">
                         <NavLink to="/dashboard" className="nav-link" onClick={() => setShow(false)}>
                             Dashboard
-                        </NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink to="/CustomerProfile" className="nav-link" onClick={() => setShow(false)}>
-                            General Info
-                        </NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink to="/LanguageConfiguration" className="nav-link" onClick={() => setShow(false)}>
-                            Language Settings
-                        </NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink to="/LabelManagement" className="nav-link" onClick={() => setShow(false)}>
-                            Labels
-                        </NavLink>
-                    </li>
-                    <li className="nav-item">
-                        <NavLink to="/Integrations" className="nav-link" onClick={() => setShow(false)}>
-                            Integrations
                         </NavLink>
                     </li>
                 </ul>

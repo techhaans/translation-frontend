@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap");
 
 .ContactUs {
+    display: flex;
     flex-direction: column;
     padding: 0 10%;
     background-image: url("../../assests/contactbg.png");
@@ -28,14 +29,16 @@
 
         form {
             margin: 2em 1em;
-            background-color: white;
+            background-color: #fff;
             border-radius: 25px;
             padding: 2em 4em;
             min-width: 290px;
-            width: 600px;
+            width: 100%;
+            max-width: 600px;
             display: flex;
             flex-direction: column;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            font-family: "Sora", sans-serif;
 
             @media (max-width: 576px) {
                 padding: 4em 2em;
@@ -44,7 +47,6 @@
             .heading {
                 font-size: 1.6em;
                 font-weight: 700;
-                font-family: "Sora", sans-serif;
                 margin-bottom: 2em;
                 text-align: center;
             }
@@ -52,7 +54,6 @@
             label {
                 font-size: 1em;
                 font-weight: 600;
-                font-family: "Sora", sans-serif;
                 margin-bottom: 0.3em;
             }
 
@@ -63,9 +64,9 @@
                 border-radius: 8px;
                 width: 100%;
                 padding: 10px;
-                font-family: "Sora", sans-serif;
                 font-size: 1em;
                 resize: none;
+                font-family: "Sora", sans-serif;
 
                 &::placeholder {
                     color: #9c9c9c;
@@ -90,13 +91,17 @@
                 color: white;
                 font-size: 1.2em;
                 font-weight: 600;
-                font-family: "Sora", sans-serif;
                 margin-top: 1em;
                 cursor: pointer;
                 transition: background-color 0.3s ease;
 
                 &:hover {
                     background-color: #0d9cc2;
+                }
+
+                &:disabled {
+                    background-color: #a5d9ea;
+                    cursor: not-allowed;
                 }
             }
 
@@ -107,7 +112,6 @@
                 border-radius: 6px;
                 margin-bottom: 1em;
                 font-size: 0.9em;
-                font-family: "Sora", sans-serif;
             }
 
             .successMessage {
@@ -118,7 +122,6 @@
                 border-radius: 8px;
                 margin-bottom: 1em;
                 font-size: 1em;
-                font-family: "Sora", sans-serif;
                 text-align: center;
             }
         }

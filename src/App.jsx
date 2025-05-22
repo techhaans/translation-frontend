@@ -24,6 +24,7 @@ import Demo from "./pages/Demo/Demo";
 import AboutUs from "./pages/AboutUs/AboutUs";
 import Careers from "./pages/Careers/Careers";
 import ProofreadersIntro from "./pages/ProofreadersIntro/ProofreadersIntro";
+import NavBarProofReader from "./components/NavBarProofReader/NavBarProofReader";
 
 function App() {
     const { isLoggedIn, userRole } = useContext(AuthContext);
@@ -31,11 +32,11 @@ function App() {
         console.log(isLoggedIn)
         if (!isLoggedIn) return <NavBar />;
         switch (userRole) {
-            case 'ADMIN':
+            case 'CUSTOMER':
                 return <NavBarAfterLogin />;
-            /*case 'proofreader':
-                return <NavBarProofreader />;
-            case 'admin':
+            case 'PROOFREADER':
+                return <NavBarProofReader />;
+            /*case 'admin':
                 return <NavBarAdmin />;
             case 'superadmin':
                 return <NavBarSuperAdmin />;*/
