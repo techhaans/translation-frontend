@@ -38,7 +38,7 @@ const ContactUs = () => {
             };
 
             try {
-                const response = await axios.post("http://13.232.167.179:8082/api/contact", payload);
+                const response = await axios.post("https://api.techhaans.com/api/contact", payload);
 
                 if (response.status === 200 && response.data.status === "SUCCESS") {
                     setSuccessMessage("Thanks for contacting us! We will get back to you shortly.");

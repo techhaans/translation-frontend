@@ -42,7 +42,7 @@ const Login = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await axios.post('http://13.232.167.179:8082/api/auth/login', {
+      const response = await axios.post('https://api.techhaans.com/api/auth/login', {
         email,
         password,
         role,
