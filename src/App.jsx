@@ -25,6 +25,7 @@ import AboutUs from "./pages/AboutUs/AboutUs";
 import Careers from "./pages/Careers/Careers";
 import ProofreadersIntro from "./pages/ProofreadersIntro/ProofreadersIntro";
 import NavBarProofReader from "./components/NavBarProofReader/NavBarProofReader";
+import Clients from "./pages/Clients/Clients";
 
 function App() {
     const { isLoggedIn, userRole } = useContext(AuthContext);
@@ -69,6 +70,7 @@ function App() {
                     <Route path="/AboutUs" element={<AboutUs />} />
                     <Route path="/Careers" element={<Careers />} />
                     <Route path="/ProofreadersIntro" element={<ProofreadersIntro />} />
+                    <Route path="/Clients" element={<Clients />} />
                     <Route
                         path='*'
                         element={

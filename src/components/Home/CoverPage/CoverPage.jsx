@@ -5,6 +5,7 @@ import styles from "./CoverPage.module.scss";
 import coverimg from "../../../assests/HomeShowScreen.png";
 import HomeShowScreen2 from "../../../assests/HomeShowScreen2.png";
 import { motion, useCycle } from "framer-motion";
+import Marquee from "react-fast-marquee";
 
 import bg1 from "../../../assests/CoverPage_Carsousel3.png";
 import bg2 from "../../../assests/CoverPage_Carsousel1.png";
@@ -14,6 +15,12 @@ const CoverPage = () => {
     const [currentSlide, cycleSlide] = useCycle(0, 1);
     const [imgarr] = useState([bg1,bg2]);
     const navigate = useNavigate();
+    const customers = [
+        "Our new customers",
+        "KNRIT",
+        "HTG (HaansTechGlobal)",
+        "Jai Techoon",
+    ];
 
     return (
         <div className={styles.CoverPage}>
@@ -27,7 +34,18 @@ const CoverPage = () => {
                             Making the world speak
                         </div>
                         <div className={styles.heading} style={{ color: "black" }}>
-                            your language <span style={{ color: "white" }}>-Digitally</span>
+                            your language
+                            <span style={{ color: "white" }}>-Digitally</span>
+                            <Marquee gradient={false} speed={200} className={styles.marquee}>
+                                {customers.map((client, index) => (
+                                    <div
+                                        key={index}
+                                        className={`${styles.clientBox} ${index === 0 ? styles.firstClientBox : ""}`}
+                                    >
+                                        {index === 0 ? `⭐ ${client}` : client}
+                                    </div>
+                                ))}
+                            </Marquee>
                         </div>
                     </div>
                 )}

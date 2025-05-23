@@ -7,6 +7,7 @@ import IndustryWeServe from "../../components/Home/IndustryWeServe/IndustryWeSer
 import OurProducts from "../../components/Home/OurProducts/OurProducts";
 import WhyChooseUs from "../../components/Home/WhyChooseUs/WhyChooseUs";
 import styles from "./Home.module.scss";
+import Clients from "../Clients/Clients";
 
 const Home = () => {
     return (

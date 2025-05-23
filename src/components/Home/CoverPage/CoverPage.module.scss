@@ -121,7 +121,7 @@
 
             &:hover {
                 transform: scale(1.1);
-                transition-duration: 0.1s;
+                transition-duration: 0.5s;
                 transition-timing-function: ease-in-out;
             }
         }
@@ -143,4 +143,45 @@
         left: 50%;
         transform: translate(-50%, 0%);
     }
+}
+.marqueeWrapper {
+    margin-top: 2em;
+    width: 100%;
+    padding: 0 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @media (max-width: 576px) {
+        margin-top: 1em;
+    }
+}
+
+.marqueeTitle {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 0.5em;
+    font-family: "Sora", sans-serif;
+}
+
+.marquee {
+    width: 100%;
+    padding: 0.5em 0;
+}
+
+.clientBox {
+
+    font-size: 0.25em;
+    padding: 0.5em 1.5em;
+    border-radius: 25px;
+    margin: 0 1em;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    white-space: nowrap;
+    font-family: "Sora", sans-serif;
+}
+.firstClientBox {
+    background-color: gold;
+    color: black;
+    font-weight: 700;
 }

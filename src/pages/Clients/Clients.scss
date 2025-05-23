@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600&display=swap');
+
+.client-marquee-section {
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  padding: 2rem 1rem;
+  font-family: 'Sora', sans-serif;
+  text-align: center;
+}
+
+.section-heading {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #1a237e;
+}
+
+.marquee-container {
+  overflow: hidden;
+  position: relative;
+  height: 70px;
+}
+
+.marquee {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.track {
+  display: flex;
+  animation: scroll 15s linear infinite;
+}
+
+.client-logo {
+  flex: 0 0 auto;
+  margin: 0 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  background: #ffffff;
+  color: #3e3e3e;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  white-space: nowrap;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}

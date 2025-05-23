@@ -43,7 +43,7 @@ const NavBar = () => {
                                 onClick={() => setShow(false)}
                                 className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                             >
-                                Products
+                                Product
                             </NavLink>
                         </li>
                         <li className='nav-item'>
@@ -91,19 +91,35 @@ const NavBar = () => {
                                 About Us
                             </NavLink>
                         </li>
+                        <li className='nav-item'>
+                            <NavLink
+                                to='/Demo'
+                                onClick={() => setShow(false)}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
+                            >
+                                Demo
+                            </NavLink>
+                        </li>
+                        <li className='nav-item'>
+                            <NavLink
+                                to='/RegisterCustomerForm'
+                                onClick={() => setShow(false)}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
+                            >
+                                Join Us
+                            </NavLink>
+                        </li>
+                        <li className='nav-item'>
+                            <NavLink
+                                to='/login'
+                                onClick={() => setShow(false)}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
+                            >
+                                Login
+                            </NavLink>
+                        </li>
                     </ul>
 
-                    <div className="nav-buttons">
-                        <div className='contactbtn' onClick={() => navigate("/Demo")}>
-                            Demo
-                        </div>
-                        <div className='contactbtn' onClick={() => navigate("/RegisterCustomerForm")}>
-                            Join Us
-                        </div>
-                        <div className='contactbtn' onClick={() => navigate("/login")}>
-                            Login
-                        </div>
-                    </div>
                     <div
                         className={`hamburger ${show && `active`}`}
                         onClick={() => setShow(!show)}
