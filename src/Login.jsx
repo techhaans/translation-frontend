@@ -9,6 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false); // <-- NEW
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -41,6 +42,7 @@ const Login = () => {
   const handleLogin = async () => {
     if (!validateForm()) return;
 
+    setLoading(true); // <-- Start loader
     try {
       const response = await axios.post('http://localhost:8082/api/auth/login', {
         email,
@@ -50,31 +52,23 @@ const Login = () => {
 
       const { token, fullName, email: userEmail, role: userRole, userId } = response.data.data;
 
-      // Store in localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('fullName', fullName);
       localStorage.setItem('email', userEmail);
       localStorage.setItem('role', userRole);
       localStorage.setItem('userId', userId);
 
-      // Update global auth state
-      login({
-        token,
-        fullName,
-        email: userEmail,
-        role: userRole,
-        userId,
-      });
-
+      login({ token, fullName, email: userEmail, role: userRole, userId });
       navigate('/');
     } catch (err) {
       console.error('Login failed:', err);
-
-      if (err.response && err.response.data && err.response.data.message) {
+      if (err.response?.data?.message) {
         setError(err.response.data.message);
       } else {
         setError('Invalid credentials or server error');
       }
+    } finally {
+      setLoading(false); // <-- Stop loader
     }
   };
 
@@ -113,7 +107,13 @@ const Login = () => {
 
           {error && <p className={Style.errortext}>{error}</p>}
 
-          <button className={Style.loginbutton} onClick={handleLogin}>Login</button>
+          <button
+              className={Style.loginbutton}
+              onClick={handleLogin}
+              disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
 
           <div className={Style.signup}>
             Don’t have an account? <a href="/RegisterCustomerForm">Sign up</a>

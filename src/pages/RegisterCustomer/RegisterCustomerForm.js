@@ -1,18 +1,33 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import axios from "axios";
 import styles from "./RegisterCustomer.module.scss";
-import { AuthContext } from '../../AuthContext';
+import { AuthContext } from "../../AuthContext";
 
 const RegisterCustomerForm = () => {
     const [countries, setCountries] = useState([]);
     const [membershipTypes, setMembershipTypes] = useState([]);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
+
+    // Refs to scroll to fields with error
+    const fieldRefs = {
+        fullName: useRef(null),
+        email: useRef(null),
+        password: useRef(null),
+        confirmPassword: useRef(null),
+        phoneNumber: useRef(null),
+        companyName: useRef(null),
+        country: useRef(null),
+        membershipId: useRef(null),
+    };
+
+    const errorMessageRef = useRef(null);
 
     useEffect(() => {
         setCountries(["India", "USA", "UK"]);
@@ -20,8 +35,8 @@ const RegisterCustomerForm = () => {
             { id: 1, name: "TRIAL" },
             { id: 2, name: "BASIC_MONTHLY" },
             { id: 3, name: "BUSINESS_MONTHLY" },
-            { id: 3, name: "BASIC_YEARLY" },
-            { id: 3, name: "BASIC_YEARLY" }
+            { id: 4, name: "BASIC_YEARLY" },
+            { id: 5, name: "BUSINESS_YEARLY" }
         ]);
     }, []);
 
@@ -53,6 +68,8 @@ const RegisterCustomerForm = () => {
             phoneNumber: Yup.string().required("Phone number is required"),
         }),
         onSubmit: async (values) => {
+            setLoading(true);
+            setErrorMessage("");
             try {
                 const payload = {
                     email: values.email,
@@ -78,7 +95,6 @@ const RegisterCustomerForm = () => {
                 ) {
                     setSuccessMessage("Registration successful! Logging you in...");
 
-                    // Call login API after successful registration
                     const loginRes = await axios.post(
                         "http://localhost:8082/api/auth/login",
                         {
@@ -96,41 +112,64 @@ const RegisterCustomerForm = () => {
                     localStorage.setItem("role", role);
                     localStorage.setItem("userId", userId);
 
-                    login({
-                        token,
-                        fullName,
-                        email,
-                        role,
-                        userId,
-                    });
-
+                    login({ token, fullName, email, role, userId });
                     navigate("/");
                 } else {
                     setErrorMessage("Registration failed.");
+                    setTimeout(() => {
+                        errorMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+                    }, 100);
                 }
             } catch (err) {
-                console.error("Registration or login error:", err);
-                setErrorMessage(
-                    err.response?.data?.message || "Registration failed. Try again."
-                );
+                setErrorMessage(err.response?.data?.message || "Registration failed. Try again.");
+                setTimeout(() => {
+                    errorMessageRef.current?.scrollIntoView({ behavior: "smooth" });
+                }, 100);
+            } finally {
+                setLoading(false);
             }
         },
+        validateOnBlur: true,
+        validateOnChange: true,
     });
+
+    const scrollToFirstError = () => {
+        const fields = Object.keys(formik.errors);
+        for (const field of fields) {
+            if (fieldRefs[field]?.current) {
+                fieldRefs[field].current.scrollIntoView({ behavior: "smooth", block: "center" });
+                break;
+            }
+        }
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        formik.handleSubmit();
+        if (Object.keys(formik.errors).length > 0) {
+            scrollToFirstError();
+        }
+    };
 
     return (
         <div className={styles.RegisterCustomer}>
             <div className={styles.centerContent}>
-                <form onSubmit={formik.handleSubmit}>
+                <form onSubmit={handleSubmit}>
                     <div className={styles.heading}>Create Your Customer Account</div>
                     <div className={styles.label}>
                         or <a href="/RegisterProofreaderForm">Create Proof Reader Account</a>
                     </div>
 
                     {successMessage && <div className={styles.success}>{successMessage}</div>}
-                    {errorMessage && <div className={styles.error}>{errorMessage}</div>}
+                    {errorMessage && (
+                        <div ref={errorMessageRef} className={styles.error}>
+                            {errorMessage}
+                        </div>
+                    )}
 
                     <label htmlFor="fullName">Full Name</label>
                     <input
+                        ref={fieldRefs.fullName}
                         name="fullName"
                         type="text"
                         value={formik.values.fullName}
@@ -144,6 +183,7 @@ const RegisterCustomerForm = () => {
 
                     <label htmlFor="email">Email</label>
                     <input
+                        ref={fieldRefs.email}
                         name="email"
                         type="email"
                         value={formik.values.email}
@@ -157,6 +197,7 @@ const RegisterCustomerForm = () => {
 
                     <label htmlFor="password">Password</label>
                     <input
+                        ref={fieldRefs.password}
                         name="password"
                         type="password"
                         placeholder="Create a password"
@@ -170,6 +211,7 @@ const RegisterCustomerForm = () => {
 
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input
+                        ref={fieldRefs.confirmPassword}
                         name="confirmPassword"
                         type="password"
                         placeholder="Confirm your password"
@@ -183,6 +225,7 @@ const RegisterCustomerForm = () => {
 
                     <label htmlFor="phoneNumber">Phone Number</label>
                     <input
+                        ref={fieldRefs.phoneNumber}
                         name="phoneNumber"
                         type="text"
                         value={formik.values.phoneNumber}
@@ -196,6 +239,7 @@ const RegisterCustomerForm = () => {
 
                     <label htmlFor="companyName">Company Name</label>
                     <input
+                        ref={fieldRefs.companyName}
                         name="companyName"
                         type="text"
                         value={formik.values.companyName}
@@ -209,6 +253,7 @@ const RegisterCustomerForm = () => {
 
                     <label htmlFor="country">Country</label>
                     <select
+                        ref={fieldRefs.country}
                         name="country"
                         value={formik.values.country}
                         onChange={formik.handleChange}
@@ -227,6 +272,7 @@ const RegisterCustomerForm = () => {
 
                     <label htmlFor="membershipId">Membership Type</label>
                     <select
+                        ref={fieldRefs.membershipId}
                         name="membershipId"
                         value={formik.values.membershipId}
                         onChange={formik.handleChange}
@@ -243,8 +289,12 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.membershipId}</div>
                     )}
 
-                    <button type="submit" className={styles.submitBtn}>
-                        Register
+                    <button
+                        type="submit"
+                        className={styles.submitBtn}
+                        disabled={loading}
+                    >
+                        {loading ? "Registering..." : "Register"}
                     </button>
 
                     <p className={styles.loginLink}>
