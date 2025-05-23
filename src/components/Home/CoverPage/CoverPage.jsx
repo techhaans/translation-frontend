@@ -36,7 +36,7 @@ const CoverPage = () => {
                         <div className={styles.heading} style={{ color: "black" }}>
                             your language
                             <span style={{ color: "white" }}>-Digitally</span>
-                            <Marquee gradient={false} speed={200} className={styles.marquee}>
+                            <Marquee gradient={false} speed={100} className={styles.marquee}>
                                 {customers.map((client, index) => (
                                     <div
                                         key={index}
