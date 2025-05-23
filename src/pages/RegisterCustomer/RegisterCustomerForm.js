@@ -85,7 +85,7 @@ const RegisterCustomerForm = () => {
                 };
 
                 const registerRes = await axios.post(
-                    "http://localhost:8082/api/auth/register/customer",
+                    "https://api.techhaans.com/api/auth/register/customer",
                     payload
                 );
 
@@ -96,7 +96,7 @@ const RegisterCustomerForm = () => {
                     setSuccessMessage("Registration successful! Logging you in...");
 
                     const loginRes = await axios.post(
-                        "http://localhost:8082/api/auth/login",
+                        "https://api.techhaans.com/api/auth/login",
                         {
                             email: values.email,
                             password: values.password,

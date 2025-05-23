@@ -72,7 +72,7 @@ const RegisterProofReaderForm = () => {
                     setSuccessMessage("Registration successful! Logging you in...");
                     scrollToMessage();
 
-                    const loginRes = await axios.post("http://localhost:8082/api/auth/login", {
+                    const loginRes = await axios.post("https://api.techhaans.com/api/auth/login", {
                         email: values.email,
                         password: values.password,
                         role: "PROOFREADER",
