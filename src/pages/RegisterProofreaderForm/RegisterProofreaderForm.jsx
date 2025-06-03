@@ -64,7 +64,7 @@ const RegisterProofReaderForm = () => {
                 });
 
                 const res = await axios.post(
-                    "http://localhost:8082/api/auth/register/proofreader",
+                    "https://api.techhaans.com/api/auth/register/proofreader",
                     formData,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );
@@ -73,7 +73,7 @@ const RegisterProofReaderForm = () => {
                     setSuccessMessage("Registration successful! Logging you in...");
                     scrollToMessage();
 
-                    const loginRes = await axios.post("http://localhost:8082/api/auth/login", {
+                    const loginRes = await axios.post("https://api.techhaans.com/api/auth/login", {
                         email: values.email,
                         password: values.password,
                         role: "PROOFREADER",
