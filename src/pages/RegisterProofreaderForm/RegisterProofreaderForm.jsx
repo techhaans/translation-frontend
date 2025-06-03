@@ -1,16 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useState, useRef, useEffect, useContext} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import styles from "./proofreader.register.module.css";
+import {AuthContext} from "../../AuthContext";
 
 const RegisterProofReaderForm = () => {
     const navigate = useNavigate();
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
-
+    const { login } = useContext(AuthContext);
     const messageRef = useRef(null);
     const formRef = useRef(null);
 
@@ -72,18 +73,20 @@ const RegisterProofReaderForm = () => {
                     setSuccessMessage("Registration successful! Logging you in...");
                     scrollToMessage();
 
-                    const loginRes = await axios.post("https://api.techhaans.com/api/auth/login", {
+                    const loginRes = await axios.post("http://localhost:8082/api/auth/login", {
                         email: values.email,
                         password: values.password,
                         role: "PROOFREADER",
                     });
-
-                    const { token, fullName, email, role, userId } = loginRes.data.data;
+                    console.log(loginRes)
+                    const { token, fullName, email, role, userId, uuid } = loginRes.data.data;
                     localStorage.setItem("token", token);
                     localStorage.setItem("fullName", fullName);
                     localStorage.setItem("email", email);
                     localStorage.setItem("role", role);
                     localStorage.setItem("userId", userId);
+                    localStorage.setItem("uuid", uuid);
+                    login({ token, fullName, email, role, userId });
 
                     navigate("/");
                 } else {

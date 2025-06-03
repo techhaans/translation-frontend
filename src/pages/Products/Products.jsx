@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from './Products.module.scss';
 import architecturediagram from '../../assests/architecture-diagram.jpeg';
-import productImg2 from '../../assests/product2.png';
 
 const ProductDescription = () => {
     return (

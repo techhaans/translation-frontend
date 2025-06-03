@@ -49,20 +49,21 @@ const Footer = () => {
                                         </div>
                                     </Link>
 
-                                    <Link
-                                        to='/PrivacyPolicy'
-                                        style={{
-                                            textDecoration: "none",
-                                            color: "inherit",
-                                        }}
-                                    >
-                                        <div className={styles.accordionBtn}>
-                                            Privacy Policy
-                                        </div>
-                                    </Link>
+                                    {/*<Link*/}
+                                    {/*    to='/PrivacyPolicy'*/}
+                                    {/*    style={{*/}
+                                    {/*        textDecoration: "none",*/}
+                                    {/*        color: "inherit",*/}
+                                    {/*    }}*/}
+                                    {/*>*/}
+                                    {/*    <div className={styles.accordionBtn}>*/}
+                                    {/*        Privacy Policy*/}
+                                    {/*    </div>*/}
+                                    {/*</Link>*/}
 
                                     <Link
                                         to='/Products'
+                                        onClick={() => window.scrollTo(0, 0)}
                                         style={{
                                             textDecoration: "none",
                                             color: "inherit",
@@ -79,67 +80,80 @@ const Footer = () => {
                     <span className='d-block d-md-none'>
                         <Accordion
                             question={"Products"}
+
                             answer={
                                 <div className='d-flex flex-column gap-2 mt-4'>
                                     <Link
-                                        to='/Home'
-                                        style={{
-                                            textDecoration: "none",
-                                            color: "inherit",
-                                        }}
-                                    >
-                                        <div className={styles.accordionBtn}>
-                                            CX 18, 51
-                                        </div>
-                                    </Link>
-
-                                    <Link
-                                        to='/AboutUs'
-                                        style={{
-                                            textDecoration: "none",
-                                            color: "inherit",
-                                        }}
-                                    >
-                                        <div className={styles.accordionBtn}>
-                                            CX 69,45,96
-                                        </div>
-                                    </Link>
-
-                                    <Link
-                                        to='/PrivacyPolicy'
-                                        style={{
-                                            textDecoration: "none",
-                                            color: "inherit",
-                                        }}
-                                    >
-                                        <div className={styles.accordionBtn}>
-                                            CX Handwash
-                                        </div>
-                                    </Link>
-
-                                    <Link
                                         to='/Products'
+                                        onClick={() => window.scrollTo(0, 0)}
                                         style={{
                                             textDecoration: "none",
                                             color: "inherit",
                                         }}
                                     >
                                         <div className={styles.accordionBtn}>
-                                            CX Dishwash
+                                            Haans Translations
                                         </div>
                                     </Link>
+                                    {/*<Link*/}
+                                    {/*    to='/Home'*/}
+                                    {/*    style={{*/}
+                                    {/*        textDecoration: "none",*/}
+                                    {/*        color: "inherit",*/}
+                                    {/*    }}*/}
+                                    {/*>*/}
+                                    {/*    <div className={styles.accordionBtn}>*/}
+                                    {/*        CX 18, 51*/}
+                                    {/*    </div>*/}
+                                    {/*</Link>*/}
 
-                                    <Link
-                                        to='/Products'
-                                        style={{
-                                            textDecoration: "none",
-                                            color: "inherit",
-                                        }}
-                                    >
-                                        <div className={styles.accordionBtn}>
-                                            CX Detergent
-                                        </div>
-                                    </Link>
+                                    {/*<Link*/}
+                                    {/*    to='/AboutUs'*/}
+                                    {/*    style={{*/}
+                                    {/*        textDecoration: "none",*/}
+                                    {/*        color: "inherit",*/}
+                                    {/*    }}*/}
+                                    {/*>*/}
+                                    {/*    <div className={styles.accordionBtn}>*/}
+                                    {/*        CX 69,45,96*/}
+                                    {/*    </div>*/}
+                                    {/*</Link>*/}
+
+                                    {/*<Link*/}
+                                    {/*    to='/PrivacyPolicy'*/}
+                                    {/*    style={{*/}
+                                    {/*        textDecoration: "none",*/}
+                                    {/*        color: "inherit",*/}
+                                    {/*    }}*/}
+                                    {/*>*/}
+                                    {/*    <div className={styles.accordionBtn}>*/}
+                                    {/*        CX Handwash*/}
+                                    {/*    </div>*/}
+                                    {/*</Link>*/}
+
+                                    {/*<Link*/}
+                                    {/*    to='/Products'*/}
+                                    {/*    style={{*/}
+                                    {/*        textDecoration: "none",*/}
+                                    {/*        color: "inherit",*/}
+                                    {/*    }}*/}
+                                    {/*>*/}
+                                    {/*    <div className={styles.accordionBtn}>*/}
+                                    {/*        CX Dishwash*/}
+                                    {/*    </div>*/}
+                                    {/*</Link>*/}
+
+                                    {/*<Link*/}
+                                    {/*    to='/Products'*/}
+                                    {/*    style={{*/}
+                                    {/*        textDecoration: "none",*/}
+                                    {/*        color: "inherit",*/}
+                                    {/*    }}*/}
+                                    {/*>*/}
+                                    {/*    <div className={styles.accordionBtn}>*/}
+                                    {/*        CX Detergent*/}
+                                    {/*    </div>*/}
+                                    {/*</Link>*/}
                                 </div>
                             }
                         />
@@ -183,17 +197,17 @@ const Footer = () => {
                                     </div>
                                 </Link>
 
-                                <Link
-                                    to='/PrivacyPolicy'
-                                    style={{
-                                        textDecoration: "none",
-                                        color: "inherit",
-                                    }}
-                                >
-                                    <div className={styles.accordionBtn}>
-                                        Privacy Policy
-                                    </div>
-                                </Link>
+                                {/*<Link*/}
+                                {/*    to='/PrivacyPolicy'*/}
+                                {/*    style={{*/}
+                                {/*        textDecoration: "none",*/}
+                                {/*        color: "inherit",*/}
+                                {/*    }}*/}
+                                {/*>*/}
+                                {/*    <div className={styles.accordionBtn}>*/}
+                                {/*        Privacy Policy*/}
+                                {/*    </div>*/}
+                                {/*</Link>*/}
 
                                 <Link
                                     to='/Products'
@@ -216,14 +230,14 @@ const Footer = () => {
                         <div className={styles.answer}>
                             <div className='d-flex flex-column gap-4 mt-4'>
                                 <Link
-                                    to='/Home'
+                                    to='/Products'
                                     style={{
                                         textDecoration: "none",
                                         color: "inherit",
                                     }}
                                 >
                                     <div className={styles.accordionBtn}>
-                                        TechHaans Translations
+                                        Haans Translations
                                     </div>
                                 </Link>
 
@@ -283,14 +297,14 @@ const Footer = () => {
                     </div>
                     <div className='d-flex flex-row gap-4 align-items-center'>
                         <a
-                            href="https://www.facebook.com/yourpage"
+                            href="https://www.facebook.com/profile.php?id=61574784095347"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
                             <img src={FacebookLogo} alt='Facebook' width={30} className='img-fluid'/>
                         </a>
                         <a
-                            href="https://www.linkedin.com/company/yourcompany"
+                            href="https://www.linkedin.com/in/tech-haans-6b11a6356/?originalSubdomain=in"
                             target="_blank"
                             rel="noopener noreferrer"
                         >

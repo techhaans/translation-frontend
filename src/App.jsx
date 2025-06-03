@@ -26,11 +26,11 @@ import Careers from "./pages/Careers/Careers";
 import ProofreadersIntro from "./pages/ProofreadersIntro/ProofreadersIntro";
 import NavBarProofReader from "./components/NavBarProofReader/NavBarProofReader";
 import Clients from "./pages/Clients/Clients";
+import ScrollToTop from "./components/ScrollTop/ScrollToTop";
 
 function App() {
     const { isLoggedIn, userRole } = useContext(AuthContext);
     const renderNavBar = () => {
-        console.log(isLoggedIn)
         if (!isLoggedIn) return <NavBar />;
         switch (userRole) {
             case 'CUSTOMER':
@@ -49,10 +49,12 @@ function App() {
     return (
         <BrowserRouter>
             {renderNavBar()}
+            <ScrollToTop/>
             <React.Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                     <Route index element={<Home />} />
                     <Route path='/' element={<Home />} />
+                    <Route path='/Home' element={<Home />} />
                     <Route path='/login' element={<Login />} />
                     <Route path='/RegisterCustomerForm' element={<RegisterCustomer />} />
                     <Route path='/RegisterProofreaderForm' element={<RegisterProofreaderForm />} />

@@ -44,19 +44,19 @@ const Login = () => {
 
     setLoading(true); // <-- Start loader
     try {
-      const response = await axios.post('https://api.techhaans.com/api/auth/login', {
+      const response = await axios.post('http://localhost:8082/api/auth/login', {
         email,
         password,
         role,
       });
 
-      const { token, fullName, email: userEmail, role: userRole, userId } = response.data.data;
-
+      const { token, fullName, email: userEmail, role: userRole, userId, uuid } = response.data.data;
       localStorage.setItem('token', token);
       localStorage.setItem('fullName', fullName);
       localStorage.setItem('email', userEmail);
       localStorage.setItem('role', userRole);
       localStorage.setItem('userId', userId);
+      localStorage.setItem('uuid', uuid ?? '');
 
       login({ token, fullName, email: userEmail, role: userRole, userId });
       navigate('/');

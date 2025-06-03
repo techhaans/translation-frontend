@@ -11,12 +11,7 @@ const ProductDescription = () => {
                     <iframe
                         src="https://www.youtube.com/embed/d1Uomgo4dAI"
                         title="TechHaahns Product Demo"
-                        style={{
-                            border: '4px solid gold',
-                            borderRadius: '12px',
-                            width: '100%',
-                            height: '500px',
-                        }}
+                        frameBorder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                     ></iframe>

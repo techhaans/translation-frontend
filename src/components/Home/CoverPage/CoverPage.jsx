@@ -68,7 +68,7 @@ const CoverPage = () => {
                         whileHover={{ scale: 1.04, transition: { duration: 0.1 } }}
                         onClick={() => navigate("/demo")}
                     >
-                        Explore Now
+                        Demo Now
                     </motion.div>
                     <motion.div
                         className={styles.btn}

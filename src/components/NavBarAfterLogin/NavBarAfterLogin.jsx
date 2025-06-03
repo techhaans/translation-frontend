@@ -7,10 +7,8 @@ import { AuthContext } from "../../AuthContext";
 const NavBarAfterLogin = () => {
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
-    const { user, logout } = useContext(AuthContext);
-    console.log(user)
+    const { logout } = useContext(AuthContext);
     const userName = localStorage.getItem("fullName");
-    console.log(userName); // "Maria Garcia" or undefined if no user
     const handleLogout = () => {
         logout();
         navigate("/Login");

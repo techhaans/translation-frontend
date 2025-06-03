@@ -29,7 +29,7 @@ const Labels = () => {
   
   const fetchLanguagesAndTranslations = async (customerUid) => {
     try {
-      const response = await fetch(`https://api.techhaans.com/customer/languages/${customerUid}`);
+      const response = await fetch(`http://localhost:8082/customer/languages/${customerUid}`);
       if (response.ok) {
         const data = await response.json();
         console.log("✅ Languages fetched:", data);
@@ -49,7 +49,7 @@ const Labels = () => {
   const fetchLabels = async (cuid) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://api.techhaans.com/labels/${cuid}`);
+      const response = await fetch(`http://localhost:8082/labels/${cuid}`);
       if (response.ok) {
         const data = await response.json();
         setLabels(data);
@@ -65,7 +65,7 @@ const Labels = () => {
 
   const fetchLanguages = async (customerUid) => {
     try {
-      const response = await fetch(`https://api.techhaans.com/customer/languages/${customerUid}`);
+      const response = await fetch(`http://localhost:8082/customer/languages/${customerUid}`);
       if (response.ok) {
         const data = await response.json();
         setLanguages(data);
@@ -83,7 +83,7 @@ const Labels = () => {
   
       for (const lang of langs) {
         const langCode = lang.languageCode;
-        const response = await fetch(`https://api.techhaans.com/translations/${customerUid}/${langCode}`);
+        const response = await fetch(`http://localhost:8082/translations/${customerUid}/${langCode}`);
         if (response.ok) {
           const data = await response.json();
           console.log(`🌐 Translations for ${langCode}:`, data);
@@ -137,7 +137,7 @@ const Labels = () => {
       if (!lang.languageKey || !newLname) continue;
 
       try {
-        const response = await fetch(`https://api.techhaans.com/language/update/${lang.languageCode}`, {
+        const response = await fetch(`http://localhost:8082/language/update/${lang.languageCode}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lname: newLname }),
