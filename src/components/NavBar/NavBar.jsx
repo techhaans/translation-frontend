@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 import "./NavBar.scss";
 import logo from "../../assests/logo.jpeg";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
     const [show, setShow] = useState(false);
-    const navigate = useNavigate();
     return (
         <>
             <header className='header animated-css-bgm'>
@@ -57,6 +56,15 @@ const NavBar = () => {
                         </li>
                         <li className='nav-item'>
                             <NavLink
+                                to='/Demo'
+                                onClick={() => setShow(false)}
+                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
+                            >
+                                Demo
+                            </NavLink>
+                        </li>
+                        <li className='nav-item'>
+                            <NavLink
                                 to='/ProofReadersIntro'
                                 onClick={() => setShow(false)}
                                 className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
@@ -89,15 +97,6 @@ const NavBar = () => {
                                 className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
                             >
                                 About Us
-                            </NavLink>
-                        </li>
-                        <li className='nav-item'>
-                            <NavLink
-                                to='/Demo'
-                                onClick={() => setShow(false)}
-                                className={({isActive}) => `nav-link ${isActive ? "activenav" : ""}`}
-                            >
-                                Demo
                             </NavLink>
                         </li>
                         <li className='nav-item'>
