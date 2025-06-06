@@ -51,7 +51,7 @@ const NavBarAfterLogin = () => {
 
                 <div className="nav-buttons d-flex align-items-center gap-3">
                     {userName && <span className="username-text">Hello, {userName}</span>}
-                    <div className="contactbtn" onClick={handleLogout}>
+                    <div  onClick={handleLogout}>
                         Logout
                     </div>
                 </div>
