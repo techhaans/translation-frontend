@@ -17,49 +17,36 @@ const CustomerProfile = () => {
         const fetchProfile = async () => {
             try {
                 const cUUID = localStorage.getItem("uuid");
-                if (!cUUID) {
-                    console.error("No cUUID found in localStorage");
-                    return;
-                }
+                if (!cUUID) return;
 
-                const response = await axios.get(
+                const { data } = await axios.get(
                     `http://localhost:8082/api/customer-info/profile?cuid=${cUUID}`
                 );
 
                 setProfile({
-                    name: response.data.fullName || "",
-                    customerId: response.data.cuid || "",
-                    company: response.data.companyName || "",
-                    plan: response.data.membershipPlan || "",
-                    planExpiry: response.data.planExpiryDate || "",
-                    registrationDate: response.data.registrationDate || "",
-                    status: response.data.accountStatus || "",
+                    name: data.fullName || "",
+                    customerId: data.cuid || "",
+                    company: data.companyName || "",
+                    plan: data.membershipPlan || "",
+                    planExpiry: data.planExpiryDate || "",
+                    registrationDate: data.registrationDate || "",
+                    status: data.accountStatus || "",
                 });
-
             } catch (err) {
                 console.error("Failed to fetch profile:", err);
-                if (err.response) {
-                    console.error("Response data:", err.response.data);
-                    console.error("Response status:", err.response.status);
-                    console.error("Response headers:", err.response.headers);
-                } else if (err.request) {
-                    console.error("No response received:", err.request);
-                } else {
-                    console.error("Request setup error:", err.message);
-                }
             }
         };
-
         fetchProfile();
     }, []);
 
     const handleChange = (e) => {
-        setProfile({ ...profile, [e.target.id]: e.target.value });
+        const { id, value } = e.target;
+        setProfile((p) => ({ ...p, [id]: value }));
     };
 
     return (
         <div className="profile-container">
-            <h2>Customer Profile </h2>
+            <h2>Customer Profile</h2>
             <form className="profile-form">
                 <label>
                     Customer Name:
@@ -67,7 +54,6 @@ const CustomerProfile = () => {
                         id="name"
                         type="text"
                         value={profile.name}
-                        onChange={handleChange}
                         readOnly
                     />
                 </label>
@@ -75,6 +61,7 @@ const CustomerProfile = () => {
                 <label>
                     Customer ID (UUID):
                     <input
+                        id="customerId"
                         type="text"
                         value={profile.customerId}
                         readOnly
@@ -87,7 +74,6 @@ const CustomerProfile = () => {
                         id="company"
                         type="text"
                         value={profile.company}
-                        onChange={handleChange}
                         readOnly
                     />
                 </label>
@@ -97,7 +83,6 @@ const CustomerProfile = () => {
                     <select
                         id="plan"
                         value={profile.plan}
-                        onChange={handleChange}
                         disabled
                     >
                         <option value="TRIAL">Startup</option>
@@ -111,10 +96,9 @@ const CustomerProfile = () => {
                     Plan Expiry Date:
                     <input
                         id="planExpiry"
-                        type="date"
+                        type="text"                      /* changed from date to text */
                         value={profile.planExpiry}
-                        onChange={handleChange}
-                        disabled
+                        readOnly
                     />
                 </label>
 
@@ -122,9 +106,8 @@ const CustomerProfile = () => {
                     Registration Date:
                     <input
                         id="registrationDate"
-                        type="date"
+                        type="text"                      /* changed from date to text */
                         value={profile.registrationDate}
-                        onChange={handleChange}
                         readOnly
                     />
                 </label>
@@ -134,7 +117,6 @@ const CustomerProfile = () => {
                     <select
                         id="status"
                         value={profile.status}
-                        onChange={handleChange}
                         disabled
                     >
                         <option value="ACTIVE">Active</option>

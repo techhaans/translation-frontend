@@ -30,6 +30,8 @@ const Integrations = () => {
     });
     const [isRunning, setIsRunning] = useState(false);
     const [currentStep, setCurrentStep] = useState(-1);
+    const [error, setError] = useState(null);
+    const [apiSuccess, setApiSuccess] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -39,30 +41,80 @@ const Integrations = () => {
         }));
     };
 
-    const handleRun = () => {
+    const callIntegrationEndpoint = async (endpoint, payload) => {
+        const response = await fetch(`http://localhost:8082/api/integration${endpoint}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || `API request failed for ${endpoint}`);
+        }
+
+        return response.json();
+    };
+
+    const handleRun = async () => {
         setIsRunning(true);
         setCurrentStep(0);
+        setError(null);
+        setApiSuccess(false);
 
-        // Simulate the steps with delays
-        let stepIndex = 0;
-        const interval = setInterval(() => {
-            stepIndex++;
-            if (stepIndex >= steps.length) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    setIsRunning(false);
-                    setCurrentStep(-1);
-                    alert("Integration process completed successfully!");
-                }, 1000);
-            } else {
-                setCurrentStep(stepIndex);
-            }
-        }, 2000); // 2 seconds per step
+        const cuid = localStorage.getItem("uuid");
+        if (!cuid) {
+            setError("No customer UUID in localStorage");
+            setIsRunning(false);
+            return;
+        }
+
+        const payload = {
+            customerCuid: cuid,
+            gitUsername: formData.gitUsername,
+            personalAccessToken: formData.personalAccessToken,
+            repoUrl: formData.repoUrl,
+            branch: formData.branch,
+            packageName: formData.packageName,
+            pageName: formData.pageName,
+            dropdownId: formData.dropdownId,
+        };
+
+        try {
+            // Sequential execution of all integration steps
+            await callIntegrationEndpoint("/connect", payload);
+            setCurrentStep(1);
+
+            await callIntegrationEndpoint("/extract", payload);
+            setCurrentStep(2);
+
+            await callIntegrationEndpoint("/translate", payload);
+            setCurrentStep(3);
+
+            await callIntegrationEndpoint("/save", payload);
+            setCurrentStep(4);
+            await callIntegrationEndpoint("/push", payload);
+
+            setApiSuccess(true);
+            alert("Integration process completed successfully!");
+        } catch (err) {
+            console.error("Integration error:", err);
+            setError(err.message);
+        } finally {
+            setIsRunning(false);
+            setCurrentStep(-1);
+        }
     };
 
     return (
         <div className="integration-container">
             <h2>Integration Settings</h2>
+
+            {error && <div className="error-banner">Error: {error}</div>}
+            {apiSuccess && <div className="success-banner">Integration successful!</div>}
+
             <div className="form-group">
                 <label>Integration Type</label>
                 <select

@@ -125,3 +125,21 @@
 .step-text {
     font-size: 1rem;
 }
+
+.error-banner {
+    background-color: #ffdddd;
+    color: #d8000c;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.success-banner {
+    background-color: #ddffdd;
+    color: #2d8515;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+}

@@ -1,13 +1,25 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import "./NavBar.scss";
 import logo from "../../assests/logo.jpeg";
 import { NavLink } from "react-router-dom";
 
 const NavBar = () => {
     const [show, setShow] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 10);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
     return (
         <>
-            <header className='header animated-css-bgm'>
+            <header
+                className={`header animated-css-bgm ${scrolled ? "scrolled" : ""}`}
+                style={{ position: "sticky" }}
+            >
                 <nav
                     className={`navbar g-0 d-flex justify-content-between align-items-center`}
                 >

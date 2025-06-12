@@ -1,109 +1,154 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, {useState, useMemo, useEffect, useCallback} from "react";
 import "./LabelManagement.css";
-
-const initialLabels = [
-    {
-        lid: 22,
-        labelName: "Welcome",
-        isActive: true,
-        defaultLanguage: "English",
-        translations: {
-            English: { text: "Welcome", approved: true },
-            French: { text: "Bienvenue", approved: true },
-            German: { text: "Willkommen", approved: true },
-        },
-    },
-    {
-        lid: 23,
-        labelName: "Thank you",
-        isActive: false,
-        defaultLanguage: "English",
-        translations: {
-            English: { text: "Thank you", approved: true },
-            French: { text: "Merci", approved: false },
-            German: { text: "Danke", approved: true },
-        },
-    },
-    // You can add more here or generate dynamically
-];
 
 const PAGE_SIZE = 10;
 
 const LabelManagement = () => {
-    const [labels, setLabels] = useState(initialLabels);
-    const [selectedLabelId, setSelectedLabelId] = useState(labels[0]?.lid || null);
+    const [labels, setLabels] = useState([]);
+    const [originalLabels, setOriginalLabels] = useState([]);
+    const [selectedLabelId, setSelectedLabelId] = useState(null);
+    const [showDetails, setShowDetails] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState(null);
 
-    // Filter labels based on search input (id or name)
-    const filteredLabels = useMemo(() => {
-        if (!searchTerm) return labels;
-        const lowerSearch = searchTerm.toLowerCase();
+    const fetchLabels = useCallback(async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const cuid = localStorage.getItem("uuid");
+            if (!cuid) throw new Error("No customer UUID in localStorage");
+            const res = await fetch(
+                `http://localhost:8082/api/label/customer/${cuid}`
+            );
+            if (!res.ok) throw new Error(`API error ${res.status}`);
+            const { data } = await res.json();
+            const fetched = data.map((label) => ({
+                lid: label.labelId,
+                labelName: label.labelName,
+                isActive: label.active,
+                defaultLanguage: label.defaultLanguage,
+                translations: Object.entries(label.translations).reduce(
+                    (acc, [lang, t]) => {
+                        acc[lang] = {
+                            text: t.translationText,
+                            approved: t.approved,
+                        };
+                        return acc;
+                    },
+                    {}
+                ),
+            }));
+            setLabels(fetched);
+            setOriginalLabels(fetched);
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // fetch labels on mount
+    useEffect(() => {
+        fetchLabels();
+    }, [fetchLabels]);
+
+    // Filter + pagination
+    const filtered = useMemo(() => {
+        const lower = searchTerm.toLowerCase();
         return labels.filter(
-            (label) =>
-                label.labelName.toLowerCase().includes(lowerSearch) ||
-                String(label.lid).includes(lowerSearch)
+            ({ lid, labelName }) =>
+                !searchTerm ||
+                labelName.toLowerCase().includes(lower) ||
+                String(lid).includes(lower)
         );
     }, [labels, searchTerm]);
 
-    // Pagination logic
-    const totalPages = Math.ceil(filteredLabels.length / PAGE_SIZE);
-    const paginatedLabels = filteredLabels.slice(
+    const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
+    const pageSlice = filtered.slice(
         (currentPage - 1) * PAGE_SIZE,
         currentPage * PAGE_SIZE
     );
 
-    // Adjust selectedLabelId if filtered out or labels change
+    // Keep selection valid if filter removes it
     useEffect(() => {
-        if (!filteredLabels.length) {
+        if (
+            selectedLabelId != null &&
+            !filtered.some((l) => l.lid === selectedLabelId)
+        ) {
             setSelectedLabelId(null);
-        } else if (!filteredLabels.find((l) => l.lid === selectedLabelId)) {
-            setSelectedLabelId(filteredLabels[0].lid);
+            setShowDetails(false);
         }
-    }, [filteredLabels, selectedLabelId]);
+    }, [filtered, selectedLabelId]);
 
-    const selectedLabel = labels.find((label) => label.lid === selectedLabelId);
+    const selected = labels.find((l) => l.lid === selectedLabelId);
 
-    const handleInputChange = (e, lang = null) => {
-        const { name, value, type, checked } = e.target;
-        setLabels((prev) =>
-            prev.map((label) => {
-                if (label.lid === selectedLabelId) {
-                    if (lang) {
-                        return {
-                            ...label,
-                            translations: {
-                                ...label.translations,
-                                [lang]: {
-                                    ...label.translations[lang],
-                                    [name]: type === "checkbox" ? checked : value,
-                                },
-                            },
-                        };
+    // Handle changes to translations
+    const handleTranslationChange = (lang, field, value) => {
+        setLabels(prev =>
+            prev.map(label => {
+                if (label.lid !== selectedLabelId) return label;
+
+                return {
+                    ...label,
+                    translations: {
+                        ...label.translations,
+                        [lang]: {
+                            ...label.translations[lang],
+                            [field]: value
+                        }
                     }
-                    return { ...label, [name]: value };
-                }
-                return label;
+                };
             })
         );
     };
 
-    const handleSave = () => {
-        alert("Saved changes!");
+    // Handle active status change
+    const handleActiveChange = (e) => {
+        const isActive = e.target.checked;
+        setLabels(prev =>
+            prev.map(label =>
+                label.lid !== selectedLabelId ? label : { ...label, isActive }
+            )
+        );
+    };
+
+    const handleSave = async () => {
+        if (!selected) return;
+        setSaving(true);
+        setError(null);
+        try {
+            const cuid = localStorage.getItem("uuid");
+            if (!cuid) throw new Error("No customer UUID in localStorage");
+        } catch (err) {
+            console.error(err);
+            setError(err.message);
+        } finally {
+            setSaving(false);
+        }
     };
 
     const handleCancel = () => {
-        setLabels(initialLabels);
+        setLabels(originalLabels);
+        setShowDetails(false);
+        setError(null);
     };
 
-    const goToPage = (page) => {
-        if (page < 1 || page > totalPages) return;
-        setCurrentPage(page);
+    const goToPage = (p) => {
+        if (p < 1 || p > totalPages) return;
+        setCurrentPage(p);
     };
 
     return (
         <div className="label-management-container">
-            {/* Left Table */}
+            {/* Global loading / error banner */}
+            {loading && <div className="banner">Loading labels…</div>}
+            {error && <div className="banner error">Error: {error}</div>}
+
+            {/* Left table */}
             <div className="label-table">
                 <h2>Labels</h2>
                 <input
@@ -115,6 +160,7 @@ const LabelManagement = () => {
                         setSearchTerm(e.target.value);
                         setCurrentPage(1);
                     }}
+                    disabled={loading}
                 />
                 <table>
                     <thead>
@@ -126,18 +172,21 @@ const LabelManagement = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {paginatedLabels.length === 0 ? (
+                    {pageSlice.length === 0 ? (
                         <tr>
-                            <td colSpan={4} style={{ textAlign: "center", padding: "20px" }}>
+                            <td colSpan={4} style={{ textAlign: "center", padding: 20 }}>
                                 No labels found.
                             </td>
                         </tr>
                     ) : (
-                        paginatedLabels.map(({ lid, labelName, isActive }) => (
+                        pageSlice.map(({ lid, labelName, isActive }) => (
                             <tr
                                 key={lid}
                                 className={lid === selectedLabelId ? "selected" : ""}
-                                onClick={() => setSelectedLabelId(lid)}
+                                onClick={() => {
+                                    setSelectedLabelId(lid);
+                                    setShowDetails(false);
+                                }}
                             >
                                 <td>{lid}</td>
                                 <td>{labelName}</td>
@@ -147,9 +196,13 @@ const LabelManagement = () => {
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             setSelectedLabelId(lid);
+                                            setShowDetails((v) => !(v && selectedLabelId === lid));
                                         }}
+                                        disabled={loading}
                                     >
-                                        View Details
+                                        {showDetails && selectedLabelId === lid
+                                            ? "Hide Details"
+                                            : "View Details"}
                                     </button>
                                 </td>
                             </tr>
@@ -158,40 +211,44 @@ const LabelManagement = () => {
                     </tbody>
                 </table>
 
-                {/* Pagination Controls */}
+                {/* Pagination */}
                 <div className="pagination">
-                    <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
+                    <button
+                        onClick={() => goToPage(currentPage - 1)}
+                        disabled={loading || currentPage === 1}
+                    >
                         &lt; Prev
                     </button>
-                    {[...Array(totalPages).keys()].map((idx) => {
-                        const pageNum = idx + 1;
+                    {[...Array(totalPages)].map((_, i) => {
+                        const p = i + 1;
                         return (
                             <button
-                                key={pageNum}
-                                className={pageNum === currentPage ? "active" : ""}
-                                onClick={() => goToPage(pageNum)}
+                                key={p}
+                                className={p === currentPage ? "active" : ""}
+                                disabled={loading || p === currentPage}
+                                onClick={() => goToPage(p)}
                             >
-                                {pageNum}
+                                {p}
                             </button>
                         );
                     })}
                     <button
                         onClick={() => goToPage(currentPage + 1)}
-                        disabled={currentPage === totalPages || totalPages === 0}
+                        disabled={loading || currentPage === totalPages}
                     >
                         Next &gt;
                     </button>
                 </div>
             </div>
 
-            {/* Right Detail Pane */}
-            {selectedLabel && (
+            {/* Detail pane */}
+            {showDetails && selected && (
                 <div className="details-pane">
                     <h3>Label Details</h3>
 
                     <div className="detail-group">
                         <label>Label ID:</label>
-                        <input type="text" value={selectedLabel.lid} readOnly />
+                        <input type="text" value={selected.lid} readOnly />
                     </div>
 
                     <div className="detail-group">
@@ -199,46 +256,47 @@ const LabelManagement = () => {
                         <input
                             type="text"
                             name="labelName"
-                            value={selectedLabel.labelName}
-                            onChange={handleInputChange}
+                            value={selected.labelName}
+                            readOnly
                         />
                     </div>
 
-                    <div className="detail-group">
-                        <label>Default Language:</label>
-                        <input
-                            type="text"
-                            name="defaultLanguage"
-                            value={selectedLabel.defaultLanguage}
-                            onChange={handleInputChange}
-                        />
-                    </div>
 
                     <h4>Translations</h4>
-                    {Object.entries(selectedLabel.translations).map(([lang, val]) => (
-                        <div key={lang} className="language-entry">
-                            <label>{lang}:</label>
-                            <input
-                                type="text"
-                                name="text"
-                                value={val.text}
-                                onChange={(e) => handleInputChange(e, lang)}
-                            />
-                            <input
-                                type="checkbox"
-                                name="approved"
-                                checked={val.approved}
-                                onChange={(e) => handleInputChange(e, lang)}
-                            />
-                            <span>Approved</span>
-                        </div>
-                    ))}
+                    {Object.entries(selected.translations).map(
+                        ([lang, { text, approved }]) => (
+                            <div key={lang} className="language-entry">
+                                <label>{lang}:</label>
+                                <input
+                                    type="text"
+                                    value={text}
+                                    onChange={(e) => handleTranslationChange(lang, 'text', e.target.value)}
+                                    disabled={loading || saving}
+                                />
+                                <input
+                                    type="checkbox"
+                                    checked={approved}
+                                    onChange={(e) => handleTranslationChange(lang, 'approved', e.target.checked)}
+                                    disabled={loading || saving}
+                                />
+                                <span>Approved</span>
+                            </div>
+                        )
+                    )}
 
                     <div className="buttons">
-                        <button className="save" onClick={handleSave}>
-                            Save
+                        <button
+                            className="save"
+                            onClick={handleSave}
+                            disabled={loading || saving}
+                        >
+                            {saving ? "Saving…" : "Save"}
                         </button>
-                        <button className="cancel" onClick={handleCancel}>
+                        <button
+                            className="cancel"
+                            onClick={handleCancel}
+                            disabled={loading || saving}
+                        >
                             Cancel
                         </button>
                     </div>

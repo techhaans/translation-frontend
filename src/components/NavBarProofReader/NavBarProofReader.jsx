@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import "./NavBarProofReader.scss";
 import logo from "../../assests/logo.jpeg";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -6,16 +6,26 @@ import { AuthContext } from "../../AuthContext";
 
 const NavBarAfterLogin = () => {
     const [show, setShow] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
     const navigate = useNavigate();
     const { logout } = useContext(AuthContext);
     const userName = localStorage.getItem("fullName");
+
     const handleLogout = () => {
         logout();
         navigate("/");
     };
 
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 10);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
-        <header className="header .animated-css-bgm">
+        <header className={`header animated-css-bgm ${scrolled ? "scrolled" : ""}`}>
             <nav className="navbar g-0 d-flex justify-content-between align-items-center">
                 <a href="/" className="nav-logo d-flex justify-content-center align-self-center">
                     <img src={logo} className="logo" alt="logo" loading="lazy" />

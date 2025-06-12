@@ -42,7 +42,7 @@ const Proofreaders = () => {
                         </p>
                         <h2>
                             Interested?{" "}
-                            <a href="/RegisterProofreaderForm" className={styles.link}>Register</a> or{" "}
+                            <a href="/#/RegisterCustomerForm" className={styles.link}>Register</a> or{" "}
                             <a href="/login" className={styles.link}>Login</a> to get started.
                         </h2>
 

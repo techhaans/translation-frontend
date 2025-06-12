@@ -143,7 +143,7 @@ const LanguageConfiguration = () => {
                     <Select
                         isMulti
                         isSearchable
-                        options={languageOptions}
+                        options={languageOptions.filter(opt => opt.value !== defaultLanguage)}
                         value={supportedLanguages}
                         onChange={setSupportedLanguages}
                         placeholder="Select one or more..."

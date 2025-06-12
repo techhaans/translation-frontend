@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = useCallback(() => {
-        localStorage.removeItem("user");
+        localStorage.clear();
         setIsLoggedIn(false);
         setUserRole(null);
         clearLogoutTimer();
