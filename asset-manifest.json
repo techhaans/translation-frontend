@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.722c24ab.css",
-    "main.js": "/static/js/main.68a44794.js",
+    "main.css": "/static/css/main.37f3adf7.css",
+    "main.js": "/static/js/main.a44d7c75.js",
     "static/media/product1.png": "/static/media/product1.14bf0df127ccac354e78.png",
     "static/media/CoverPage_Carsousel2.png": "/static/media/CoverPage_Carsousel2.413ffae9791e4a3a9aca.png",
     "static/media/HomeShowScreen2.png": "/static/media/HomeShowScreen2.81e64c2d7495880e2d9f.png",
@@ -20,11 +20,11 @@
     "static/media/CoverPage_Carsousel1.png": "/static/media/CoverPage_Carsousel1.3b2a9ff64aa7ef5af2ca.png",
     "static/media/whychooseus1.png": "/static/media/whychooseus1.4c3af246a179337ee95c.png",
     "index.html": "/index.html",
-    "main.722c24ab.css.map": "/static/css/main.722c24ab.css.map",
-    "main.68a44794.js.map": "/static/js/main.68a44794.js.map"
+    "main.37f3adf7.css.map": "/static/css/main.37f3adf7.css.map",
+    "main.a44d7c75.js.map": "/static/js/main.a44d7c75.js.map"
   },
   "entrypoints": [
-    "static/css/main.722c24ab.css",
-    "static/js/main.68a44794.js"
+    "static/css/main.37f3adf7.css",
+    "static/js/main.a44d7c75.js"
   ]
 }
