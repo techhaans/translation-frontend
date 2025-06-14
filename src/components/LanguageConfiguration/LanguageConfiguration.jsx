@@ -38,55 +38,80 @@ const languageOptions = allLanguages.map(({ name }) => ({
 
 const LanguageConfiguration = () => {
     const [defaultLanguage, setDefaultLanguage] = useState("English");
-    const [supportedLanguages, setSupportedLanguages] = useState([languageOptions[0]]);
+    const [supportedLanguages, setSupportedLanguages] = useState([]);
     const [translationQuota, setTranslationQuota] = useState("Loading...");
     const [statusMessage, setStatusMessage] = useState("");
-    const [statusType, setStatusType] = useState("");
+    const [statusType, setStatusType] = useState(""); // "success" | "error"
+    const [fetchError, setFetchError] = useState("");
 
-
+    // 1) Fetch existing config on mount
     useEffect(() => {
         const fetchLanguageConfig = async () => {
             const cuid = localStorage.getItem("uuid");
             if (!cuid) return;
 
             try {
-                const { data } = await axios.get(`https://api.techhaans.com/api/customer_Lang/config/${cuid}`);
-                const { defaultLanguageName, supportedLanguagenames, remainingQuota } = data.data;
+                const { data } = await axios.get(
+                    `https://api.techhaans.com/api/customer_Lang/config/${cuid}`
+                );
+                const {
+                    defaultLanguageName,
+                    supportedLanguagenames,
+                    remainingQuota,
+                } = data.data;
 
-                if (defaultLanguageName) setDefaultLanguage(defaultLanguageName);
-
-                if (Array.isArray(supportedLanguagenames)) {
-                    const selectedOptions = supportedLanguagenames
-                        .map(name => languageOptions.find(opt => opt.value === name))
-                        .filter(Boolean);
-
-                    if (selectedOptions.length) setSupportedLanguages(selectedOptions);
+                if (defaultLanguageName) {
+                    setDefaultLanguage(defaultLanguageName);
                 }
 
-                if (remainingQuota !== undefined) setTranslationQuota(remainingQuota);
-            } catch (error) {
-                console.error("Failed to fetch language config:", error);
+
+                if (Array.isArray(supportedLanguagenames)) {
+                    const selected = supportedLanguagenames
+                        // filter out any that match defaultLanguageName
+                        .filter((n) => n !== defaultLanguageName)
+                        .map((name) => languageOptions.find((opt) => opt.value === name))
+                        .filter(Boolean);
+
+                    setSupportedLanguages(selected);
+                }
+
+                if (remainingQuota !== undefined) {
+                    setTranslationQuota(remainingQuota);
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+                setFetchError("⚠️ Could not load your language settings.");
             }
         };
 
         fetchLanguageConfig();
     }, []);
 
+    // 2) Whenever defaultLanguage changes, remove it from supportedLanguages
+    useEffect(() => {
+        setSupportedLanguages((prev) =>
+            prev.filter((opt) => opt.value !== defaultLanguage)
+        );
+    }, [defaultLanguage]);
+
     const handleSubmit = async () => {
+        setStatusMessage("");
         const cuid = localStorage.getItem("uuid");
         if (!cuid) {
-            setStatusMessage("User ID not found.");
+            setStatusMessage("❌ User ID not found.");
             setStatusType("error");
             return;
         }
 
-        const defaultLangObj = allLanguages.find(lang => lang.name === defaultLanguage);
+        const defaultLangObj = allLanguages.find(
+            (lang) => lang.name === defaultLanguage
+        );
         const supportedLangIds = supportedLanguages
-            .map(lang => allLanguages.find(l => l.name === lang.value)?.id)
-            .filter(id => id !== undefined);
+            .map((lang) => allLanguages.find((l) => l.name === lang.value)?.id)
+            .filter((id) => id != null);
 
         if (!defaultLangObj || supportedLangIds.length === 0) {
-            setStatusMessage("Please ensure valid language selections.");
+            setStatusMessage("❌ Please select a default and at least one other language.");
             setStatusType("error");
             return;
         }
@@ -98,14 +123,14 @@ const LanguageConfiguration = () => {
         };
 
         try {
-            const response = await axios.post("https://api.techhaans.com/api/customer_Lang/configure", payload, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-            });
 
-            const { status, message } = response.data;
+            const resp = await axios.post(
+                "https://api.techhaans.com/api/customer_Lang/configure",
+                payload,
+                { headers: { "Content-Type": "application/json" } }
+            );
+            const { status, message } = resp.data;
+
 
             if (status === "SUCCESS") {
                 setStatusMessage("✅ " + message);
@@ -114,26 +139,34 @@ const LanguageConfiguration = () => {
                 setStatusMessage("❌ Failed to update language configuration.");
                 setStatusType("error");
             }
-        } catch (error) {
-            console.error("Error updating language configuration:", error);
-            setStatusMessage("❌ Error while saving. Retaining old values.");
+        } catch (err) {
+            console.error("Save error:", err);
+            setStatusMessage("❌ Error while saving. Please try again.");
             setStatusType("error");
         }
     };
 
-
     return (
         <div className="lang-config-container">
             <h2>Language Configuration</h2>
-            <form className="lang-config-form" onSubmit={e => e.preventDefault()}>
+
+            {fetchError && <div className="status-message error">{fetchError}</div>}
+
+            <form
+                className="lang-config-form"
+                onSubmit={(e) => e.preventDefault()}
+            >
                 <label>
                     Default Language:
                     <select
                         value={defaultLanguage}
-                        onChange={e => setDefaultLanguage(e.target.value)}
+                        onChange={(e) => setDefaultLanguage(e.target.value)}
+                        className="default-select"
                     >
                         {allLanguages.map(({ id, name }) => (
-                            <option key={id} value={name}>{name}</option>
+                            <option key={id} value={name}>
+                                {name}
+                            </option>
                         ))}
                     </select>
                 </label>
@@ -143,7 +176,10 @@ const LanguageConfiguration = () => {
                     <Select
                         isMulti
                         isSearchable
-                        options={languageOptions}
+                        // 3) Filter out current defaultLanguage from the list
+                        options={languageOptions.filter(
+                            (opt) => opt.value !== defaultLanguage
+                        )}
                         value={supportedLanguages}
                         onChange={setSupportedLanguages}
                         placeholder="Select one or more..."

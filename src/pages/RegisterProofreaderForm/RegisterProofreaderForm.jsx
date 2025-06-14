@@ -5,6 +5,37 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import styles from "./proofreader.register.module.css";
 import {AuthContext} from "../../AuthContext";
+import Select from "react-select";
+
+
+const languageOptions = [
+    { value: "English", label: "English" },
+    { value: "Spanish", label: "Spanish" },
+    { value: "Chinese", label: "Chinese" },
+    { value: "Turkish", label: "Turkish" },
+    { value: "French", label: "French" },
+    { value: "German", label: "German" },
+    { value: "Urdu", label: "Urdu" },
+    { value: "Hindi", label: "Hindi" },
+    { value: "Panjabi", label: "Panjabi" },
+    { value: "Persian", label: "Persian" },
+    { value: "Vietnamese", label: "Vietnamese" },
+    { value: "Portuguese", label: "Portuguese" },
+    { value: "Japanese", label: "Japanese" },
+    { value: "Korean", label: "Korean" },
+    { value: "Malay", label: "Malay" },
+    { value: "Marathi", label: "Marathi" },
+    { value: "Gujarati", label: "Gujarati" },
+    { value: "Tamil", label: "Tamil" },
+    { value: "Telugu", label: "Telugu" },
+    { value: "Pashto", label: "Pashto" },
+    { value: "Kurdish", label: "Kurdish" },
+    { value: "Croatian", label: "Croatian" },
+    { value: "Russian", label: "Russian" },
+    { value: "Ukrainian", label: "Ukrainian" },
+    { value: "Swahili", label: "Swahili" },
+];
+
 
 const RegisterProofReaderForm = () => {
     const navigate = useNavigate();
@@ -111,17 +142,16 @@ const RegisterProofReaderForm = () => {
     };
 
     useEffect(() => {
-        const firstErrorField = Object.keys(formik.errors)[0];
-        if (firstErrorField) {
+        if (formik.isSubmitting && Object.keys(formik.errors).length > 0) {
+            const firstErrorField = Object.keys(formik.errors)[0];
             const field = document.getElementsByName(firstErrorField)[0];
             if (field) {
                 field.scrollIntoView({ behavior: "smooth", block: "center" });
                 field.focus();
             }
         }
-    }, [formik.isSubmitting && Object.keys(formik.errors).length]);
+    }, [formik.isSubmitting, formik.errors]);
 
-    const languageOptions = ["English", "Telugu", "Hindi", "Spanish", "French"];
 
     return (
         <div className={styles.RegisterProofReader}>
@@ -180,25 +210,25 @@ const RegisterProofReaderForm = () => {
                     />
 
                     <label>Supported Languages</label>
-                    <select
+                    <Select
+                        isMulti
                         name="supportedLanguages"
-                        multiple
-                        value={formik.values.supportedLanguages}
-                        onChange={(e) =>
+                        options={languageOptions}  // ← passes the structured options
+                        classNamePrefix="react-select"
+                        value={languageOptions.filter(opt =>
+                            formik.values.supportedLanguages.includes(opt.value)
+                        )}
+                        onChange={selected =>
                             formik.setFieldValue(
                                 "supportedLanguages",
-                                Array.from(e.target.selectedOptions, (option) => option.value)
+                                selected.map(opt => opt.value)
                             )
                         }
-                    >
-                        {languageOptions.map((lang) => (
-                            <option key={lang} value={lang}>
-                                {lang}
-                            </option>
-                        ))}
-                    </select>
+                    />
                     {formik.errors.supportedLanguages && (
-                        <div className={styles.error}>{formik.errors.supportedLanguages}</div>
+                        <div className={styles.error}>
+                            {formik.errors.supportedLanguages}
+                        </div>
                     )}
 
                     <label>

@@ -145,7 +145,7 @@ const RegisterProofreaderForm = () => {
         </select>
 
         <button type="submit">Register</button>
-        <p className="login-link">Already have an account? <a href="/">Login here</a></p>
+        <p className="login-link">Already have an account? <a href="/#/Login">Login here</a></p>
       </form>
     </div>
   );

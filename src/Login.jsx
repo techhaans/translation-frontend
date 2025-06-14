@@ -116,10 +116,10 @@ const Login = () => {
           </button>
 
           <div className={Style.signup}>
-            Don’t have an account? <a href="/RegisterCustomerForm">Sign up</a>
+            Don’t have an account? <a href="/#/RegisterCustomerForm">Sign up</a>
           </div>
           <div className={Style.signup}>
-            For ProofReader Registration <a href="/RegisterProofreaderForm">Sign up With Proof Reader</a>
+            For ProofReader Registration <a href="/#/RegisterProofreaderForm">Sign up With Proof Reader</a>
           </div>
         </div>
       </div>
