@@ -1,6 +1,8 @@
+/* src/components/LabelManagement/LabelManagement.css */
+
 .label-management-container {
     display: flex;
-    height: 100vh;
+    /* height: 100vh; */          /* removed to allow natural page scroll */
     padding: 30px;
     gap: 30px;
     background: #f8f9fa;
@@ -13,8 +15,8 @@
     flex: 1.6;
     background: white;
     border-radius: 10px;
-    box-shadow: 0 6px 18px rgb(0 0 0 / 0.1);
-    overflow-y: auto;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    /* overflow-y: auto; */      /* removed so it scrolls with page */
 }
 
 .label-table h2 {
@@ -70,14 +72,14 @@
     background-color: #0056b3;
 }
 
-/* Right details pane */
+/* Detail pane */
 .details-pane {
     flex: 1.4;
     background: white;
     border-radius: 12px;
     padding: 30px 28px;
-    box-shadow: 0 6px 20px rgb(0 0 0 / 0.07);
-    overflow-y: auto;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+    /* overflow-y: auto; */    /* optional to remove */
 }
 
 .details-pane h3 {
@@ -188,6 +190,7 @@ h4 {
 .buttons button.cancel:hover {
     background-color: #b5b5b5;
 }
+
 .search-input {
     width: 95%;
     margin: 14px auto 22px auto;
@@ -234,24 +237,15 @@ h4 {
 }
 
 .pagination button.active {
-    background-color: #007bff;       /* solid primary blue */
-    color: white;                    /* white text */
-    border-color: #0056b3;           /* darker-blue border */
-    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.4);
-    cursor: default;                 /* show non-clickable cursor */
-    pointer-events: none;            /* ensure no hover/click events */
-}
-
-.pagination button.active:hover {
-    /* lock in the same visuals on hover */
     background-color: #007bff;
     color: white;
     border-color: #0056b3;
+    box-shadow: 0 2px 6px rgba(0,123,255,0.4);
+    pointer-events: none;
 }
 
-.tab.active {
+.pagination button.active:hover {
     background-color: #007bff;
     color: white;
-    border: 1px solid #0056b3;
-    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.4);
+    border-color: #0056b3;
 }
