@@ -52,7 +52,7 @@ const LanguageConfiguration = () => {
 
             try {
                 const { data } = await axios.get(
-                    `http://localhost:8082/api/customer_Lang/config/${cuid}`
+                    `https://api.techhaans.com/api/customer_Lang/config/${cuid}`
                 );
                 const {
                     defaultLanguageName,
@@ -63,6 +63,7 @@ const LanguageConfiguration = () => {
                 if (defaultLanguageName) {
                     setDefaultLanguage(defaultLanguageName);
                 }
+
 
                 if (Array.isArray(supportedLanguagenames)) {
                     const selected = supportedLanguagenames
@@ -122,12 +123,14 @@ const LanguageConfiguration = () => {
         };
 
         try {
+
             const resp = await axios.post(
-                "http://localhost:8082/api/customer_Lang/configure",
+                "https://api.techhaans.com/api/customer_Lang/configure",
                 payload,
                 { headers: { "Content-Type": "application/json" } }
             );
             const { status, message } = resp.data;
+
 
             if (status === "SUCCESS") {
                 setStatusMessage("✅ " + message);

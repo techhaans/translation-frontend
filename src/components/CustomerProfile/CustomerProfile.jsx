@@ -19,8 +19,9 @@ const CustomerProfile = () => {
                 const cUUID = localStorage.getItem("uuid");
                 if (!cUUID) return;
 
-                const { data } = await axios.get(
-                    `http://localhost:8082/api/customer-info/profile?cuid=${cUUID}`
+
+                const data = await axios.get(
+                    `https://api.techhaans.com/api/customer-info/profile?cuid=${cUUID}`
                 );
 
                 setProfile({
