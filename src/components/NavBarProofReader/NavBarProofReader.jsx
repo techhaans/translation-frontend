@@ -33,10 +33,27 @@ const NavBarAfterLogin = () => {
 
                 <ul className={`nav-menu d-flex justify-content-center align-items-center ${show ? "active" : ""}`}>
                     <li className="nav-item">
-                        <NavLink to="/dashboard" className="nav-link" onClick={() => setShow(false)}>
+                        <NavLink to="/ProofreaderDashboard" className="nav-link" onClick={() => setShow(false)}>
                             Dashboard
                         </NavLink>
                     </li>
+                    <li className="nav-item">
+                        <NavLink to="/ProofreaderProfile" className="nav-link" onClick={() => setShow(false)}>
+                            My Profile
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink to="/ProofreaderTasks" className="nav-link" onClick={() => setShow(false)}>
+                            My Tasks
+                        </NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink to="/ProofreaderEarnings" className="nav-link" onClick={() => setShow(false)}>
+                            Earnings
+                        </NavLink>
+                    </li>
+
+
                 </ul>
 
                 <div className="nav-buttons d-flex align-items-center gap-3">

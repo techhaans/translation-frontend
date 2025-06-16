@@ -21,7 +21,7 @@ const CustomerProfile = () => {
 
 
                 const data = await axios.get(
-                    `https://api.techhaans.com/api/customer-info/profile?cuid=${cUUID}`
+                    `http://localhost:8082/api/customer-info/profile?cuid=${cUUID}`
                 );
 
                 setProfile({

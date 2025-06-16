@@ -31,7 +31,7 @@ const RegisterCustomerForm = () => {
         role: 'CUSTOMER' 
       };
   
-      const userResponse = await fetch('https://api.techhaans.com/user/register', {
+      const userResponse = await fetch('http://localhost:8082/user/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userPayload)
@@ -52,7 +52,7 @@ const RegisterCustomerForm = () => {
         name: form.name 
       };
   
-      const customerResponse = await fetch('https://api.techhaans.com/customer/createCustomer', {
+      const customerResponse = await fetch('http://localhost:8082/customer/createCustomer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(customerPayload)

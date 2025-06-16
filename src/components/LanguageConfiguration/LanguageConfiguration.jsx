@@ -52,7 +52,7 @@ const LanguageConfiguration = () => {
 
             try {
                 const { data } = await axios.get(
-                    `https://api.techhaans.com/api/customer_Lang/config/${cuid}`
+                    `http://localhost:8082/api/customer_Lang/config/${cuid}`
                 );
                 const {
                     defaultLanguageName,
@@ -125,7 +125,7 @@ const LanguageConfiguration = () => {
         try {
 
             const resp = await axios.post(
-                "https://api.techhaans.com/api/customer_Lang/configure",
+                "http://localhost:8082/api/customer_Lang/configure",
                 payload,
                 { headers: { "Content-Type": "application/json" } }
             );

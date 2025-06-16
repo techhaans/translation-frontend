@@ -30,6 +30,11 @@ import Careers from "./pages/Careers/Careers";
 import ProofreadersIntro from "./pages/ProofreadersIntro/ProofreadersIntro";
 import Clients from "./pages/Clients/Clients";
 
+import ProofreaderProfile from "./components/ProofreaderProfile/ProofreaderProfile";
+import ProofreaderTasks from "./components/ProofreaderTasks/ProofreaderTasks";
+import ProofreaderEarnings from "./components/ProofreaderEarnings/ProofreaderEarnings";
+import ProofreaderDashboard from "./components/ProofreaderDashboard/ProofreaderDashboard";
+
 function AppContent() {
     const { isLoggedIn, userRole } = useContext(AuthContext);
 
@@ -63,7 +68,10 @@ function AppContent() {
                     <Route path="/Careers" element={<Careers />} />
                     <Route path="/ProofreadersIntro" element={<ProofreadersIntro />} />
                     <Route path="/Clients" element={<Clients />} />
-
+                    <Route path="/ProofreaderProfile" element={<ProofreaderProfile />} />
+                    <Route path="/ProofreaderTasks" element={<ProofreaderTasks />} />
+                    <Route path="/ProofreaderEarnings" element={<ProofreaderEarnings />} />
+                    <Route path="/ProofreaderDashboard" element={<ProofreaderDashboard />} />
                     {/* Protected: only when logged in */}
                     <Route element={<ProtectedRoute />}>
                         <Route path="/dashboard" element={<Dashboard />} />
