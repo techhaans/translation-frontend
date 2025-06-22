@@ -1,7 +1,7 @@
 import React from 'react';
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import 'chart.js/auto';
-import './Dashboard.css';
+import styles from './Dashboard.module.css';
 
 const Dashboard = () => {
     // Sample chart data
@@ -53,53 +53,50 @@ const Dashboard = () => {
     };
 
     return (
-        <div className="dashboard-container">
-            <div className="dashboard-header">
+        <div className={styles.dashboardContainer}>
+            <div className={styles.dashboardHeader}>
                 <h2>Translation Dashboard</h2>
             </div>
 
-            {/* Summary Cards */}
-            <div className="cards">
-                <div className="card">
+            <div className={styles.cards}>
+                <div className={styles.card}>
                     <h3>Total Sales</h3>
                     <p>$12,430</p>
                 </div>
-                <div className="card">
+                <div className={styles.card}>
                     <h3>New Users</h3>
                     <p>234</p>
                 </div>
-                <div className="card">
+                <div className={styles.card}>
                     <h3>Orders</h3>
                     <p>1,024</p>
                 </div>
-                <div className="card">
+                <div className={styles.card}>
                     <h3>Pending Tickets</h3>
                     <p>17</p>
                 </div>
             </div>
 
-            {/* Charts */}
-            <div className="charts-grid">
-                <div className="chart-card">
+            <div className={styles.chartsGrid}>
+                <div className={styles.chartCard}>
                     <h3>Daily Translation Volume</h3>
                     <Line data={lineData} />
                 </div>
-                <div className="chart-card">
+                <div className={styles.chartCard}>
                     <h3>Monthly Label Consumption</h3>
                     <Bar data={barData} />
                 </div>
-                <div className="chart-card">
+                <div className={styles.chartCard}>
                     <h3>Label Status</h3>
                     <Pie data={pieData} />
                 </div>
-                <div className="chart-card">
+                <div className={styles.chartCard}>
                     <h3>Membership Types</h3>
                     <Doughnut data={doughnutData} />
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="table-container">
+            <div className={styles.tableContainer}>
                 <h3>Proofreader List</h3>
                 <table>
                     <thead>

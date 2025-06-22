@@ -29,7 +29,7 @@ const Labels = () => {
   
   const fetchLanguagesAndTranslations = async (customerUid) => {
     try {
-      const response = await fetch(`http://localhost:8082/customer/languages/${customerUid}`);
+      const response = await fetch(`http://api.techhaans.com/customer/languages/${customerUid}`);
       if (response.ok) {
         const data = await response.json();
         console.log("✅ Languages fetched:", data);
@@ -49,7 +49,7 @@ const Labels = () => {
   const fetchLabels = async (cuid) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8082/labels/${cuid}`);
+      const response = await fetch(`http://api.techhaans.com/labels/${cuid}`);
       if (response.ok) {
         const data = await response.json();
         setLabels(data);
@@ -63,19 +63,19 @@ const Labels = () => {
     }
   };
 
-  const fetchLanguages = async (customerUid) => {
-    try {
-      const response = await fetch(`http://localhost:8082/customer/languages/${customerUid}`);
-      if (response.ok) {
-        const data = await response.json();
-        setLanguages(data);
-      } else {
-        console.error('Failed to fetch languages');
-      }
-    } catch (error) {
-      console.error('Error fetching languages:', error);
-    }
-  };
+  // const fetchLanguages = async (customerUid) => {
+  //   try {
+  //     const response = await fetch(`http://api.techhaans.com/customer/languages/${customerUid}`);
+  //     if (response.ok) {
+  //       const data = await response.json();
+  //       setLanguages(data);
+  //     } else {
+  //       console.error('Failed to fetch languages');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching languages:', error);
+  //   }
+  // };
 
   const fetchTranslationsFromAPI = async (customerUid, langs) => {
     try {
@@ -83,7 +83,7 @@ const Labels = () => {
   
       for (const lang of langs) {
         const langCode = lang.languageCode;
-        const response = await fetch(`http://localhost:8082/translations/${customerUid}/${langCode}`);
+        const response = await fetch(`http://api.techhaans.com/translations/${customerUid}/${langCode}`);
         if (response.ok) {
           const data = await response.json();
           console.log(`🌐 Translations for ${langCode}:`, data);
@@ -137,7 +137,7 @@ const Labels = () => {
       if (!lang.languageKey || !newLname) continue;
 
       try {
-        const response = await fetch(`http://localhost:8082/language/update/${lang.languageCode}`, {
+        const response = await fetch(`http://api.techhaans.com/language/update/${lang.languageCode}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ lname: newLname }),
@@ -161,7 +161,7 @@ const Labels = () => {
     <div className="label-container">
       <header className="header">
         <div>
-          <img src="public/logo.jpg" alt="logo" />
+          <img src="../public/logo.jpg" alt="logo" />
         </div>
         <div className="header-right">
           <button className="logout-button" onClick={logout}>Logout</button>

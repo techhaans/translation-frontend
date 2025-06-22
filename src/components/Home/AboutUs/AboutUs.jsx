@@ -1,8 +1,10 @@
 import React from "react";
 import styles from "./AboutUs.module.scss";
 import leftImage from "../../../assests/aboutus.jpeg";
+import {useNavigate} from "react-router-dom";
 
 const AboutUs = () => {
+    const navigate = useNavigate()
     return (
         <div className={styles.AboutUs} id="AboutUs">
             <div
@@ -25,7 +27,7 @@ const AboutUs = () => {
                         </ul>
 
                     </div>
-                    <div className={styles.learnMore}>Learn More</div>
+                    <div className={styles.learnMore} onClick={()=>navigate('/products')}>Learn More</div>
                 </div>
             </div>
         </div>

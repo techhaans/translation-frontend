@@ -6,8 +6,21 @@ import axios from "axios";
 import styles from "./RegisterCustomer.module.scss";
 import { AuthContext } from "../../AuthContext";
 
+// full list of countries + dial codes
+const countryList = [
+    { name: "India", code: "+91" },
+    { name: "USA",   code: "+1"  },
+    { name: "UK",    code: "+44" },
+];
+
+// how many digits each country’s local number should be
+const phoneLengthMap = {
+    "+91": 10,
+    "+1":  10,
+    "+44": 10,
+};
+
 const RegisterCustomerForm = () => {
-    const [countries, setCountries] = useState([]);
     const [membershipTypes, setMembershipTypes] = useState([]);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
@@ -15,45 +28,46 @@ const RegisterCustomerForm = () => {
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
 
-    // Refs to scroll to fields with error
+    // refs for scrolling to errors
     const fieldRefs = {
-        fullName: useRef(null),
-        email: useRef(null),
-        password: useRef(null),
+        fullName:        useRef(null),
+        email:           useRef(null),
+        password:        useRef(null),
         confirmPassword: useRef(null),
-        phoneNumber: useRef(null),
-        companyName: useRef(null),
-        country: useRef(null),
-        membershipId: useRef(null),
+        companyName:     useRef(null),
+        country:         useRef(null),
+        phoneCode:       useRef(null),
+        phoneNumber:     useRef(null),
+        membershipId:    useRef(null),
     };
-
     const errorMessageRef = useRef(null);
 
     useEffect(() => {
-        setCountries(["India", "USA", "UK"]);
         setMembershipTypes([
             { id: 1, name: "TRIAL" },
             { id: 2, name: "BASIC_MONTHLY" },
             { id: 3, name: "BUSINESS_MONTHLY" },
             { id: 4, name: "BASIC_YEARLY" },
-            { id: 5, name: "BUSINESS_YEARLY" }
+            { id: 5, name: "BUSINESS_YEARLY" },
         ]);
     }, []);
 
     const formik = useFormik({
         initialValues: {
-            fullName: "",
-            email: "",
-            password: "",
+            fullName:        "",
+            email:           "",
+            password:        "",
             confirmPassword: "",
-            country: "",
-            membershipId: "",
-            companyName: "",
-            phoneNumber: "",
+            country:         "",
+            phoneCode:       "",
+            phoneNumber:     "",
+            companyName:     "",
+            membershipId:    "",
         },
+
         validationSchema: Yup.object({
-            fullName: Yup.string().required("Full name is required"),
-            email: Yup.string().email("Invalid email").required("Email is required"),
+            fullName:        Yup.string().required("Full name is required"),
+            email:           Yup.string().email("Invalid email").required("Email is required"),
             password: Yup.string()
                 .required("Password is required")
                 .min(8, "Password must be at least 8 characters")
@@ -62,30 +76,55 @@ const RegisterCustomerForm = () => {
             confirmPassword: Yup.string()
                 .required("Please confirm your password")
                 .oneOf([Yup.ref("password"), null], "Passwords must match"),
-            country: Yup.string().required("Country is required"),
+
+            country:    Yup.string().required("Country is required"),
+            phoneCode:  Yup.string().required("Country code is required"),
+
+            phoneNumber: Yup.string()
+                .required("Phone number is required")
+                .matches(/^[0-9]+$/, "Phone number must contain only digits")
+                .test({
+                    name: "len-by-country",
+                    // generate an appropriate message
+                    message: ({ parent }) => {
+                        const code = parent?.phoneCode;
+                        const expected = phoneLengthMap[code];
+                        return expected
+                            ? `Phone number must be exactly ${expected} digits for ${code}`
+                            : "";
+                    },
+                    // perform the actual length check
+                    test: (value, { parent }) => {
+                        const code = parent?.phoneCode;
+                        const expected = phoneLengthMap[code];
+                        if (!expected) return true;                // no rule defined ⇒ pass
+                        return Boolean(value && value.length === expected);
+                    },
+                }),
+
+            companyName:  Yup.string().required("Company name is required"),
             membershipId: Yup.string().required("Membership is required"),
-            companyName: Yup.string().required("Company name is required"),
-            phoneNumber: Yup.string().required("Phone number is required"),
         }),
+
         onSubmit: async (values) => {
             setLoading(true);
             setErrorMessage("");
             try {
                 const payload = {
-                    email: values.email,
-                    password: values.password,
-                    fullName: values.fullName,
-                    phoneNumber: values.phoneNumber,
-                    country: values.country,
-                    membershipId: Number(values.membershipId),
-                    companyName: values.companyName,
-                    planExpiryDate: "2025-05-22",
+                    email:            values.email,
+                    password:         values.password,
+                    fullName:         values.fullName,
+                    phoneNumber:      `${values.phoneCode}${values.phoneNumber}`,
+                    country:          values.country,
+                    membershipId:     Number(values.membershipId),
+                    companyName:      values.companyName,
+                    planExpiryDate:   "2025-05-22",
                     registrationDate: "2026-05-22",
-                    accountStatus: "ACTIVE",
+                    accountStatus:    "ACTIVE",
                 };
 
                 const registerRes = await axios.post(
-                    "http://localhost:8082/api/auth/register/customer",
+                    "http://api.techhaans.com/api/auth/register/customer",
                     payload
                 );
 
@@ -94,16 +133,10 @@ const RegisterCustomerForm = () => {
                     registerRes.data.message.includes("Customer registered successfully")
                 ) {
                     setSuccessMessage("Registration successful! Logging you in...");
-
                     const loginRes = await axios.post(
-                        "http://localhost:8082/api/auth/login",
-                        {
-                            email: values.email,
-                            password: values.password,
-                            role: "CUSTOMER",
-                        }
+                        "http://api.techhaans.com/api/auth/login",
+                        { email: values.email, password: values.password, role: "CUSTOMER" }
                     );
-
                     const { token, fullName, email, role, userId } = loginRes.data.data;
 
                     localStorage.setItem("token", token);
@@ -115,38 +148,54 @@ const RegisterCustomerForm = () => {
                     login({ token, fullName, email, role, userId });
                     navigate("/");
                 } else {
-                    setErrorMessage("Registration failed.");
-                    setTimeout(() => {
-                        errorMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-                    }, 100);
+                    throw new Error("Registration failed.");
                 }
             } catch (err) {
-                setErrorMessage(err.response?.data?.message || "Registration failed. Try again.");
-                setTimeout(() => {
-                    errorMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-                }, 100);
+                setErrorMessage(
+                    err.response?.data?.message || err.message || "Registration failed. Try again."
+                );
+                setTimeout(
+                    () => errorMessageRef.current?.scrollIntoView({ behavior: "smooth" }),
+                    100
+                );
             } finally {
                 setLoading(false);
             }
         },
-        validateOnBlur: true,
+
+        validateOnBlur:   true,
         validateOnChange: true,
     });
 
+    // scroll to first invalid field
     const scrollToFirstError = () => {
-        const fields = Object.keys(formik.errors);
-        for (const field of fields) {
-            if (fieldRefs[field]?.current) {
-                fieldRefs[field].current.scrollIntoView({ behavior: "smooth", block: "center" });
+        for (const key of Object.keys(formik.errors)) {
+            const ref = fieldRefs[key];
+            if (ref?.current) {
+                ref.current.scrollIntoView({ behavior: "smooth", block: "center" });
                 break;
             }
         }
     };
 
+    const handleCountryChange = (e) => {
+        const name = e.target.value;
+        formik.setFieldValue("country", name);
+        const found = countryList.find((c) => c.name === name);
+        formik.setFieldValue("phoneCode", found ? found.code : "");
+    };
+
+    const handleCodeChange = (e) => {
+        const code = e.target.value;
+        formik.setFieldValue("phoneCode", code);
+        const found = countryList.find((c) => c.code === code);
+        formik.setFieldValue("country", found ? found.name : "");
+    };
+
     const handleSubmit = (e) => {
         e.preventDefault();
         formik.handleSubmit();
-        if (Object.keys(formik.errors).length > 0) {
+        if (Object.keys(formik.errors).length) {
             scrollToFirstError();
         }
     };
@@ -167,37 +216,43 @@ const RegisterCustomerForm = () => {
                         </div>
                     )}
 
+                    {/* Full Name */}
                     <label htmlFor="fullName">Full Name</label>
                     <input
                         ref={fieldRefs.fullName}
+                        id="fullName"
                         name="fullName"
                         type="text"
+                        placeholder="Enter your full name"
                         value={formik.values.fullName}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        placeholder="Enter your full name"
                     />
                     {formik.touched.fullName && formik.errors.fullName && (
                         <div className={styles.error}>{formik.errors.fullName}</div>
                     )}
 
+                    {/* Email */}
                     <label htmlFor="email">Email</label>
                     <input
                         ref={fieldRefs.email}
+                        id="email"
                         name="email"
                         type="email"
+                        placeholder="Enter your email"
                         value={formik.values.email}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
-                        placeholder="Enter your email"
                     />
                     {formik.touched.email && formik.errors.email && (
                         <div className={styles.error}>{formik.errors.email}</div>
                     )}
 
+                    {/* Password */}
                     <label htmlFor="password">Password</label>
                     <input
                         ref={fieldRefs.password}
+                        id="password"
                         name="password"
                         type="password"
                         placeholder="Create a password"
@@ -209,9 +264,11 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.password}</div>
                     )}
 
+                    {/* Confirm Password */}
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input
                         ref={fieldRefs.confirmPassword}
+                        id="confirmPassword"
                         name="confirmPassword"
                         type="password"
                         placeholder="Confirm your password"
@@ -223,46 +280,20 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.confirmPassword}</div>
                     )}
 
-                    <label htmlFor="phoneNumber">Phone Number</label>
-                    <input
-                        ref={fieldRefs.phoneNumber}
-                        name="phoneNumber"
-                        type="text"
-                        value={formik.values.phoneNumber}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        placeholder="Enter your phone number"
-                    />
-                    {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-                        <div className={styles.error}>{formik.errors.phoneNumber}</div>
-                    )}
-
-                    <label htmlFor="companyName">Company Name</label>
-                    <input
-                        ref={fieldRefs.companyName}
-                        name="companyName"
-                        type="text"
-                        value={formik.values.companyName}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        placeholder="Enter company name"
-                    />
-                    {formik.touched.companyName && formik.errors.companyName && (
-                        <div className={styles.error}>{formik.errors.companyName}</div>
-                    )}
-
+                    {/* Country */}
                     <label htmlFor="country">Country</label>
                     <select
                         ref={fieldRefs.country}
+                        id="country"
                         name="country"
                         value={formik.values.country}
-                        onChange={formik.handleChange}
+                        onChange={handleCountryChange}
                         onBlur={formik.handleBlur}
                     >
                         <option value="">Select Country</option>
-                        {countries.map((c) => (
-                            <option key={c} value={c}>
-                                {c}
+                        {countryList.map((c) => (
+                            <option key={c.name} value={c.name}>
+                                {c.name}
                             </option>
                         ))}
                     </select>
@@ -270,9 +301,57 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.country}</div>
                     )}
 
+                    {/* Phone (code + number) */}
+                    <label>Phone Number</label>
+                    <div className={styles.phoneInput}>
+                        <select
+                            ref={fieldRefs.phoneCode}
+                            name="phoneCode"
+                            value={formik.values.phoneCode}
+                            onChange={handleCodeChange}
+                        >
+                            <option value="">+</option>
+                            {countryList.map((c) => (
+                                <option key={c.code} value={c.code}>
+                                    {c.code}
+                                </option>
+                            ))}
+                        </select>
+                        <input
+                            ref={fieldRefs.phoneNumber}
+                            name="phoneNumber"
+                            type="text"
+                            placeholder="Enter your phone number"
+                            value={formik.values.phoneNumber}
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                        />
+                    </div>
+                    {formik.touched.phoneNumber && formik.errors.phoneNumber && (
+                        <div className={styles.error}>{formik.errors.phoneNumber}</div>
+                    )}
+
+                    {/* Company Name */}
+                    <label htmlFor="companyName">Company Name</label>
+                    <input
+                        ref={fieldRefs.companyName}
+                        id="companyName"
+                        name="companyName"
+                        type="text"
+                        placeholder="Enter company name"
+                        value={formik.values.companyName}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                    />
+                    {formik.touched.companyName && formik.errors.companyName && (
+                        <div className={styles.error}>{formik.errors.companyName}</div>
+                    )}
+
+                    {/* Membership */}
                     <label htmlFor="membershipId">Membership Type</label>
                     <select
                         ref={fieldRefs.membershipId}
+                        id="membershipId"
                         name="membershipId"
                         value={formik.values.membershipId}
                         onChange={formik.handleChange}
@@ -289,12 +368,9 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.membershipId}</div>
                     )}
 
-                    <button
-                        type="submit"
-                        className={styles.submitBtn}
-                        disabled={loading}
-                    >
-                        {loading ? "Registering..." : "Register"}
+                    {/* Submit */}
+                    <button type="submit" className={styles.submitBtn} disabled={loading}>
+                        {loading ? "Registering…" : "Register"}
                     </button>
 
                     <p className={styles.loginLink}>

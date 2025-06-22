@@ -1,135 +1,211 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
+import Select from "react-select";
 import "./ProofreaderProfile.css";
+import { allLanguages } from "../../data-json/allLanguages";
 
 const ProofreaderProfile = () => {
     const [profile, setProfile] = useState({
         fullName: "",
-        proofreaderId: "",
         email: "",
         phone: "",
-        languages: [],
+        supportedLanguages: [],
         status: "",
-        registrationDate: "",
-        paymentEmail: "",
+        registrationDate: ""
     });
-
     const [errors, setErrors] = useState({});
-    const languageOptions = ["EN → FR", "EN → DE", "EN → ES", "FR → EN"];
+    const [saving, setSaving] = useState(false);
+    const [statusMessage, setStatusMessage] = useState("");
+    const [statusType, setStatusType] = useState(""); // "info"|"success"|"error"
+
+    const languageOptions = useMemo(
+        () =>
+            allLanguages.map(({ name }) => ({
+                value: name,
+                label: name
+            })),
+        []
+    );
+
+    const fetchProfile = useCallback(async () => {
+        const uuid = localStorage.getItem("uuid");
+        if (!uuid) return;
+        try {
+            const { data: resp } = await axios.get(
+                `http://api.techhaans.com/api/proofreader/profile/${uuid}`
+            );
+            const d = resp.data;
+            setProfile({
+                fullName: d.fullName || "",
+                email: d.email || "",
+                phone: d.phoneNumber || "",
+                supportedLanguages: Array.isArray(d.supportedLang)
+                    ? d.supportedLang.map((lang) => ({ value: lang, label: lang }))
+                    : [],
+                status: d.status || "ACTIVE",
+                registrationDate: d.registerDate
+                    ? new Date(d.registerDate).toLocaleString()
+                    : ""
+            });
+            // ← WRITE fullName into localStorage
+            if (d.fullName) {
+                localStorage.setItem("fullName", d.fullName);
+            }
+        } catch (err) {
+            console.error("Failed to fetch proofreader profile:", err);
+            setStatusType("error");
+            setStatusMessage("❌ Could not load your profile.");
+        }
+    }, []);
 
     useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const uuid = localStorage.getItem("uuid");
-                if (!uuid) return;
-
-                const { data } = await axios.get(
-                    `http://localhost:8082/api/proofreader/profile?uuid=${uuid}`
-                );
-
-                setProfile({
-                    fullName: data.fullName || "",
-                    proofreaderId: data.uuid || "",
-                    email: data.email || "",
-                    phone: data.phone || "",
-                    languages: data.languages || [],
-                    status: data.status || "ACTIVE",
-                    registrationDate: data.registrationDate || "",
-                    paymentEmail: data.paymentEmail || "",
-                });
-            } catch (err) {
-                console.error("Failed to fetch proofreader profile:", err);
-            }
-        };
-
         fetchProfile();
-    }, []);
+    }, [fetchProfile]);
 
     const validate = () => {
         const errs = {};
-        if (!profile.fullName) errs.fullName = "Name is required";
-        if (!profile.email || !/\S+@\S+\.\S+/.test(profile.email)) errs.email = "Valid email is required";
-        if (profile.phone && !/^\+?\d{7,15}$/.test(profile.phone)) errs.phone = "Invalid phone number";
-        if (!profile.paymentEmail || !/\S+@\S+\.\S+/.test(profile.paymentEmail)) errs.paymentEmail = "Valid payment email required";
+        if (!profile.fullName.trim()) errs.fullName = "Name is required";
+        if (!profile.supportedLanguages.length)
+            errs.supportedLanguages = "Select at least one language";
+        if (profile.phone && !/^\+?\d{7,15}$/.test(profile.phone))
+            errs.phone = "Invalid phone number";
         return errs;
     };
 
     const handleChange = (e) => {
         const { id, value } = e.target;
-        setProfile((prev) => ({ ...prev, [id]: value }));
+        setProfile((p) => ({ ...p, [id]: value }));
     };
 
-    const handleLanguagesChange = (e) => {
-        const selected = Array.from(e.target.selectedOptions, (opt) => opt.value);
-        setProfile((prev) => ({ ...prev, languages: selected }));
+    const handleLanguagesChange = (selected) => {
+        setProfile((p) => ({
+            ...p,
+            supportedLanguages: selected || []
+        }));
     };
 
-    const handleSubmit = () => {
-        const validationErrors = validate();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
+    const handleSubmit = async () => {
+        const errs = validate();
+        if (Object.keys(errs).length) {
+            setErrors(errs);
             return;
         }
-        console.log("Profile submitted:", profile);
-        // Add your save API call here
+        setErrors({});
+        setSaving(true);
+        setStatusType("info");
+        setStatusMessage("Updating…");
+
+        try {
+            const uuid = localStorage.getItem("uuid");
+            const payload = {
+                fullName: profile.fullName,
+                phoneNumber: profile.phone,
+                supportedLanguages: profile.supportedLanguages.map((o) => o.value)
+            };
+
+            await axios.put(
+                `http://api.techhaans.com/api/proofreader/profile/update/${uuid}`,
+                payload,
+                { headers: { "Content-Type": "application/json" } }
+            );
+            // ← UPDATE localStorage on success
+            localStorage.setItem("fullName", profile.fullName);
+
+            await fetchProfile();
+            setStatusType("success");
+            setStatusMessage("✅ Profile updated successfully!");
+            setTimeout(() => setStatusMessage(""), 3000);
+        } catch (err) {
+            console.error("Update failed:", err);
+            setStatusType("error");
+            setStatusMessage("❌ Failed to save. Please try again.");
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
         <div className="proofreader-container">
             <h2>Proofreader Profile</h2>
-            <form className="proofreader-form">
+            <form
+                className="proofreader-form"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSubmit();
+                }}
+            >
                 <label>
                     Full Name:
-                    <input id="fullName" type="text" value={profile.fullName} onChange={handleChange} />
-                    {errors.fullName && <span className="error">{errors.fullName}</span>}
-                </label>
-
-                <label>
-                    Proofreader ID:
-                    <input id="proofreaderId" type="text" value={profile.proofreaderId} readOnly />
+                    <input
+                        id="fullName"
+                        type="text"
+                        value={profile.fullName}
+                        onChange={handleChange}
+                    />
+                    {errors.fullName && (
+                        <span className="error">{errors.fullName}</span>
+                    )}
                 </label>
 
                 <label>
                     Email:
-                    <input id="email" type="email" value={profile.email} onChange={handleChange} />
-                    {errors.email && <span className="error">{errors.email}</span>}
+                    <input id="email" type="email" value={profile.email} readOnly />
                 </label>
 
                 <label>
                     Phone Number:
-                    <input id="phone" type="text" value={profile.phone} onChange={handleChange} />
+                    <input
+                        id="phone"
+                        type="text"
+                        value={profile.phone}
+                        onChange={handleChange}
+                    />
                     {errors.phone && <span className="error">{errors.phone}</span>}
                 </label>
 
                 <label>
-                    Language Pairs:
-                    <select multiple value={profile.languages} onChange={handleLanguagesChange}>
-                        {languageOptions.map((lang) => (
-                            <option key={lang} value={lang}>{lang}</option>
-                        ))}
-                    </select>
+                    Supported Languages:
+                    <Select
+                        isMulti
+                        options={languageOptions}
+                        value={profile.supportedLanguages}
+                        onChange={handleLanguagesChange}
+                        classNamePrefix="react-select"
+                        placeholder="Select one or more…"
+                    />
+                    {errors.supportedLanguages && (
+                        <span className="error">{errors.supportedLanguages}</span>
+                    )}
                 </label>
 
                 <label>
                     Status:
-                    <select id="status" value={profile.status} onChange={handleChange}>
+                    <select id="status" value={profile.status} onChange={handleChange} disabled>
                         <option value="ACTIVE">Active</option>
                         <option value="SUSPENDED">Suspended</option>
+                        <option value="AVAILABLE">Available</option>
                     </select>
                 </label>
 
                 <label>
                     Registration Date:
-                    <input id="registrationDate" type="text" value={profile.registrationDate} readOnly />
+                    <input
+                        id="registrationDate"
+                        type="text"
+                        value={profile.registrationDate}
+                        readOnly
+                    />
                 </label>
 
-                <label>
-                    Payment Email:
-                    <input id="paymentEmail" type="email" value={profile.paymentEmail} onChange={handleChange} />
-                    {errors.paymentEmail && <span className="error">{errors.paymentEmail}</span>}
-                </label>
+                <button type="submit" disabled={saving}>
+                    {saving ? "Saving…" : "Save Changes"}
+                </button>
 
-                <button type="button" onClick={handleSubmit}>Save Changes</button>
+                {statusMessage && (
+                    <div className={`status-message ${statusType}`}>
+                        {statusMessage}
+                    </div>
+                )}
             </form>
         </div>
     );

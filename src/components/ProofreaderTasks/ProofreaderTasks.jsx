@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./ProofreaderTasks.css";
 
+// Replace with your actual labeler ID (e.g. from auth context)
+const LABELER_ID = "af3e1c7d-b4ac-4adb-b26e-a4ef58a2261b";
+
 const ProofreaderTasks = () => {
     const [customers, setCustomers] = useState([]);
-    const [languages, setLanguages] = useState([]);
+    const [languages, setLanguages] = useState([]);    // raw API data
     const [selectedCustomer, setSelectedCustomer] = useState("");
     const [selectedLanguage, setSelectedLanguage] = useState("");
     const [labels, setLabels] = useState([]);
@@ -11,38 +14,55 @@ const ProofreaderTasks = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const labelsPerPage = 10;
 
-    const dummyCustomers = [
-        { id: "cust1", name: "Acme Corp" },
-        { id: "cust2", name: "Globex Inc." },
-        { id: "cust3", name: "Tech Solutions" },
-    ];
-
-    const dummyLanguages = [
-        "English → French",
-        "English → Spanish",
-        "German → English",
-    ];
-
-    const dummyLabels = Array.from({ length: 103 }, (_, i) => ({
-        labelId: `LBL${String(i + 1).padStart(4, "0")}`,
-        labelName: `Label ${i + 1}`,
-        finalTranslation: `Translation ${i + 1}`,
-        isApproved: false,
-    }));
-
     useEffect(() => {
-        setCustomers(dummyCustomers);
-        setLanguages(dummyLanguages);
+        fetch("http://api.techhaans.com/api/proofreader/label/tasks/customers")
+            .then((res) => {
+                if (!res.ok) throw new Error("Failed to fetch customers");
+                return res.json();
+            })
+            .then((payload) => {
+                const list = Array.isArray(payload.data)
+                    ? payload.data.map(({ cuid, customerName }) => ({
+                        id: cuid,
+                        name: customerName,
+                    }))
+                    : [];
+                setCustomers(list);
+            })
+            .catch((err) => console.error("Customer fetch error:", err));
     }, []);
 
     useEffect(() => {
-        if (selectedCustomer && selectedLanguage) {
-            setLabels(dummyLabels);
-            setCurrentPage(1);
-        } else {
-            setLabels([]);
+        if (!selectedCustomer) {
+            setLanguages([]);
+            setSelectedLanguage("");
+            return;
         }
-    }, [selectedCustomer, selectedLanguage]);
+
+        const url = `http://api.techhaans.com/api/proofreader/label/tasks/${LABELER_ID}/${selectedCustomer}/lang-pairs`;
+        fetch(url)
+            .then((res) => {
+                if (!res.ok) throw new Error("Failed to fetch language pairs");
+                return res.json();
+            })
+            .then((payload) => {
+                const pairs = Array.isArray(payload.data) ? payload.data : [];
+                setLanguages(pairs);
+                // clear downstream state
+                setSelectedLanguage("");
+                setLabels([]);
+                setCurrentPage(1);
+            })
+            .catch((err) => console.error("Language-pair fetch error:", err));
+    }, [selectedCustomer]);
+
+    const languageOptions = Array.isArray(languages) ? languages : [];
+    const hasLangs = languageOptions.length > 0;
+
+    const indexOfLastLabel = currentPage * labelsPerPage;
+    const indexOfFirstLabel = indexOfLastLabel - labelsPerPage;
+    const currentLabels = labels.slice(indexOfFirstLabel, indexOfLastLabel);
+    const totalPages = Math.ceil(labels.length / labelsPerPage);
 
     const handleTranslationChange = (labelIndex, newValue) => {
         const updated = [...labels];
@@ -63,11 +83,6 @@ const ProofreaderTasks = () => {
         alert("Changes saved successfully!");
     };
 
-    const indexOfLastLabel = currentPage * labelsPerPage;
-    const indexOfFirstLabel = indexOfLastLabel - labelsPerPage;
-    const currentLabels = labels.slice(indexOfFirstLabel, indexOfLastLabel);
-    const totalPages = Math.ceil(labels.length / labelsPerPage);
-
     return (
         <div className="tasks-container">
             <h2>My Tasks</h2>
@@ -75,7 +90,10 @@ const ProofreaderTasks = () => {
             <div className="filters">
                 <label>
                     Select Customer:
-                    <select value={selectedCustomer} onChange={(e) => setSelectedCustomer(e.target.value)}>
+                    <select
+                        value={selectedCustomer}
+                        onChange={(e) => setSelectedCustomer(e.target.value)}
+                    >
                         <option value="">-- Select --</option>
                         {customers.map((c) => (
                             <option key={c.id} value={c.id}>
@@ -85,17 +103,28 @@ const ProofreaderTasks = () => {
                     </select>
                 </label>
 
-                <label>
-                    Select Language Pair:
-                    <select value={selectedLanguage} onChange={(e) => setSelectedLanguage(e.target.value)}>
-                        <option value="">-- Select --</option>
-                        {languages.map((l, idx) => (
-                            <option key={idx} value={l}>
-                                {l}
-                            </option>
-                        ))}
-                    </select>
-                </label>
+                {selectedCustomer ? (
+                    hasLangs ? (
+                        <label>
+                            Select Language Pair:
+                            <select
+                                value={selectedLanguage}
+                                onChange={(e) => setSelectedLanguage(e.target.value)}
+                            >
+                                <option value="">-- Select --</option>
+                                {languageOptions.map((l, idx) => (
+                                    <option key={idx} value={l}>
+                                        {l}
+                                    </option>
+                                ))}
+                            </select>
+                        </label>
+                    ) : (
+                        <p className="no-langs">
+                            No language pairs available for this customer.
+                        </p>
+                    )
+                ) : null}
             </div>
 
             {currentLabels.length > 0 ? (
@@ -106,13 +135,13 @@ const ProofreaderTasks = () => {
                                 <strong>{label.labelName}</strong> (ID: {label.labelId})
                             </div>
                             <div className="translation-section">
-                                <textarea
-                                    value={label.finalTranslation}
-                                    onChange={(e) =>
-                                        handleTranslationChange(index, e.target.value)
-                                    }
-                                    rows={2}
-                                />
+                <textarea
+                    value={label.finalTranslation}
+                    onChange={(e) =>
+                        handleTranslationChange(index, e.target.value)
+                    }
+                    rows={2}
+                />
                                 <label className="approval">
                                     <input
                                         type="checkbox"
@@ -128,7 +157,9 @@ const ProofreaderTasks = () => {
                     ))}
                 </div>
             ) : (
-                <p className="no-labels">Please select a customer and language to view tasks.</p>
+                <p className="no-labels">
+                    Please select a customer and language to view tasks.
+                </p>
             )}
 
             {labels.length > labelsPerPage && (
@@ -140,8 +171,8 @@ const ProofreaderTasks = () => {
                         Previous
                     </button>
                     <span>
-                        Page {currentPage} of {totalPages}
-                    </span>
+            Page {currentPage} of {totalPages}
+          </span>
                     <button
                         onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                         disabled={currentPage === totalPages}

@@ -1,0 +1,191 @@
+.helpContainer {
+    padding: 30px;
+    background: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+}
+
+.title {
+    margin-bottom: 24px;
+    color: #222;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* New Ticket Form */
+.newTicket {
+    background: white;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    margin-bottom: 32px;
+}
+
+.newTicketTitle {
+    margin-top: 0;
+    font-size: 22px;
+    color: #1a1a1a;
+    font-weight: 600;
+}
+
+.fieldGroup {
+    margin-bottom: 18px;
+}
+
+.label {
+    display: block;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.select,
+.textarea {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 15px;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s;
+}
+
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.raiseBtn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+}
+
+.raiseBtn:hover {
+    background-color: #0056b3;
+}
+
+/* Tickets Table */
+.ticketTable {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.ticketTableHeader {
+    margin: 0;
+    padding: 18px 24px;
+    border-bottom: 1px solid #ddd;
+    font-size: 22px;
+    color: #222;
+    font-weight: 700;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.th,
+.td {
+    padding: 14px 24px;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    color: #444;
+    text-align: left;
+}
+
+.th {
+    background: #f1f3f5;
+}
+
+.tr:hover {
+    background: #e7f1ff;
+    cursor: pointer;
+}
+
+.selectedRow {
+    background: #d0e6ff;
+    font-weight: 600;
+}
+
+.resolveBtn {
+    background-color: #28a745;
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+}
+
+.resolveBtn:hover {
+    background-color: #218838;
+}
+
+/* Expanded details row */
+.detailsRowTd {
+    background: #fafafa;
+}
+
+.detailGroup {
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px 0 14px 0;
+}
+
+.pagination button {
+    border: 1.8px solid #007bff;
+    background: white;
+    color: #007bff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: #007bff;
+    color: white;
+}
+
+.pagination button:disabled {
+    border-color: #999;
+    color: #999;
+    cursor: default;
+}
+
+.pagination button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #0056b3;
+    box-shadow: 0 2px 6px rgba(0,123,255,0.4);
+    pointer-events: none;
+}
+
+.pagination button.active:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #0056b3;
+}

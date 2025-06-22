@@ -1,13 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 
-::root {
+:root {
     scroll-behavior: smooth;
+}
+
+html {
+    zoom: 1.1;
 }
 
 ::selection {
     color: rgb(43, 43, 43);
     background: #17b6e250;
 }
+
 * {
     box-sizing: border-box;
     padding: 0;
@@ -16,8 +21,8 @@
 
 html,
 body {
-    scroll-snap-type: proximity;
-    scroll-snap-points-y: repeat(100vh);
+    margin: 0;
+    padding: 0;
     scroll-snap-type: y proximity;
 }
 
@@ -28,34 +33,32 @@ body::-webkit-scrollbar {
 body {
     display: flex;
     flex-direction: column;
-    margin: 0;
-    padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
+    "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-
     font-size: 16px;
+}
 
-    @media (min-width: 1441px) {
+/* Responsive font sizing */
+@media (min-width: 1441px) {
+    body {
         font-size: calc(14px + 0.4vw);
     }
-    @media (max-width: 1440px) {
-        font-size: 14px;
-    }
-    @media (max-width: 768px) {
-        font-size: 14px;
-    }
-    @media (max-width: 576px) {
+}
+@media (max-width: 1440px),
+(max-width: 768px),
+(max-width: 576px) {
+    body {
         font-size: 14px;
     }
 }
 
 code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-        monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
+
 body,
 div,
 dl,
@@ -82,25 +85,24 @@ td {
     margin: 0;
     padding: 0;
 }
-html,
-body {
-    margin: 0;
-    padding: 0;
-}
+
 table {
     border-collapse: collapse;
     border-spacing: 0;
 }
+
 fieldset,
 img {
     border: 0;
 }
+
 input {
     border: 1px solid #b0b0b0;
     padding: 3px 5px 4px;
     color: #979797;
     width: 190px;
 }
+
 address,
 caption,
 cite,
@@ -111,14 +113,17 @@ var {
     font-style: normal;
     font-weight: normal;
 }
+
 ol,
 ul {
     list-style: none;
 }
+
 caption,
 th {
     text-align: left;
 }
+
 h1,
 h2,
 h3,
@@ -128,10 +133,12 @@ h6 {
     font-size: 100%;
     font-weight: normal;
 }
+
 q:before,
 q:after {
     content: "";
 }
+
 abbr,
 acronym {
     border: 0;

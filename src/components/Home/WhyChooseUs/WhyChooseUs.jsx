@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./WhyChooseUs.module.scss";
 import whychooseus1 from "../../../assests/whychooseus1.png";
-import whychooseus2 from "../../../assests/whychooseus2.png";
+// import whychooseus2 from "../../../assests/whychooseus2.png";
 import whychooseus3 from "../../../assests/whychooseus3.png";
 import whychooseus4 from "../../../assests/whychooseus4.png";
 import whychooseus_zero from "../../../assests/whychooseus_zero.png";

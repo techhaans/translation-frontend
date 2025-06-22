@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import ScrollDown from "../../ScrollDown/ScrollDown";
 import styles from "./CoverPage.module.scss";
 import coverimg from "../../../assests/HomeShowScreen.png";
-import HomeShowScreen2 from "../../../assests/HomeShowScreen2.png";
+// import HomeShowScreen2 from "../../../assests/HomeShowScreen2.png";
 import { motion, useCycle } from "framer-motion";
 import Marquee from "react-fast-marquee";
 
 import bg1 from "../../../assests/CoverPage_Carsousel3.png";
 import bg2 from "../../../assests/CoverPage_Carsousel1.png";
-import bg3 from "../../../assests/CoverPage_Carsousel2.png";
+// import bg3 from "../../../assests/CoverPage_Carsousel2.png";
 
 const CoverPage = () => {
     const [currentSlide, cycleSlide] = useCycle(0, 1);

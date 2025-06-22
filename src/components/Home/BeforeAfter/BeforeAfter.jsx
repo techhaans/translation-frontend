@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./BeforeAfter.scss";
+import styles from "./BeforeAfter.module.scss";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Pagination } from "swiper";
 import BeforeAfterSliderComponent from "../BeforeAfterSliderComponent/BeforeAfterSliderComponent";
@@ -12,59 +12,48 @@ import "swiper/css";
 import "swiper/css/virtual";
 import "swiper/css/pagination";
 
+SwiperCore.use([Pagination]);
+
 const BeforeAfter = () => {
     const [swiperRef, setSwiperRef] = useState(null);
 
     const nextHandler = () => {
-        swiperRef.slideNext();
+        if (swiperRef) swiperRef.slideNext();
     };
 
-    SwiperCore.use([Pagination]);
-
     return (
-        <div className='BeforeAfter'>
-            <div className='centerContent'>
-                <div className='content'>
+        <div className={styles.beforeAfter}>
+            <div className={styles.centerContent}>
+                <div className={styles.content}>
                     <Swiper
-                        onSwiper={(swiper) => setSwiperRef(swiper)}
-                        slidesPerView={"1"}
-                        centeredSlides={true}
+                        onSwiper={setSwiperRef}
+                        slidesPerView={1}
+                        centeredSlides
                         spaceBetween={30}
-                        loop={true}
+                        loop
                         loopedSlides={4}
                         allowTouchMove={false}
-                        freeMode={true}
-                        pagination={{
-                            clickable: true,
-                        }}
+                        freeMode
+                        pagination={{ clickable: true }}
                         modules={[Pagination]}
-                        className='mySwiper'
+                        className={styles.mySwiper}
                     >
-                        {[1, 2, 3, 4].map((curr, index) => (
-                            <SwiperSlide key={index}>
-                                <div className='row g-0'>
-                                    <div className='col-md-5 left d-flex flex-row flex-md-column align-items-center align-items-md-start justify-content-between justify-content-md-start '>
-                                        <div>
-                                            <div className='leftHeading'>
-                                                Before & After
+                        {[1, 2, 3, 4].map((_, idx) => (
+                            <SwiperSlide key={idx}>
+                                <div className="row g-0">
+                                    <div className="col-md-5">
+                                        <div className={styles.left}>
+                                            <div className={styles.leftHeading}>Before &amp; After</div>
+                                            <div className={styles.leftsubHeading}>Kitchen Cleaning</div>
+                                            <div className={styles.nextBtn} onClick={nextHandler}>
+                                                Next <HiArrowNarrowRight size={20} />
                                             </div>
-                                            <div className='leftsubHeading'>
-                                                Kitchen Cleaning
-                                            </div>
-                                        </div>
-                                        <div
-                                            className='nextBtn'
-                                            onClick={nextHandler}
-                                        >
-                                            Next{" "}
-                                            <HiArrowNarrowRight size={20} />
                                         </div>
                                     </div>
-                                    <div className='col-md-7 right'>
-                                        <BeforeAfterSliderComponent
-                                            img1={after1}
-                                            img2={before1}
-                                        />
+                                    <div className="col-md-7">
+                                        <div className={styles.right}>
+                                            <BeforeAfterSliderComponent img1={after1} img2={before1} />
+                                        </div>
                                     </div>
                                 </div>
                             </SwiperSlide>

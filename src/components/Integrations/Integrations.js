@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import "./Integrations.css";
 
 const integrationOptions = [
-    "GitHub",
-    "Bitbucket",
-    "GitLab",
-    "Wix",
-    "Shopify",
+    { label: "GitHub",    value: "GITHUB"    },
+    { label: "Bitbucket", value: "BITBUCKET" },
+    { label: "GitLab",    value: "GITLAB"    },
+    { label: "Wix",       value: "WIX"       },
+    { label: "Shopify",   value: "SHOPIFY"   },
 ];
 
 const steps = [
@@ -26,7 +26,8 @@ const endpoints = [
 ];
 
 const Integrations = () => {
-    const [integrationType, setIntegrationType] = useState(integrationOptions[0]);
+    // initialize to the first option's value
+    const [integrationType, setIntegrationType] = useState(integrationOptions[0].value);
     const [formData, setFormData] = useState({
         gitUsername: "",
         personalAccessToken: "",
@@ -48,8 +49,9 @@ const Integrations = () => {
     };
 
     const callIntegrationEndpoint = async (endpoint, payload) => {
+        console.log("Payload for", endpoint, payload);
         const res = await fetch(
-            `http://localhost:8082/api/integration${endpoint}`,
+            `http://api.techhaans.com/api/integration${endpoint}`,
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -67,7 +69,6 @@ const Integrations = () => {
         setIsRunning(true);
         setError(null);
         setApiSuccess(false);
-        // don't clear lastFailedStep here
 
         const cuid = localStorage.getItem("uuid");
         if (!cuid) {
@@ -76,23 +77,25 @@ const Integrations = () => {
             return;
         }
 
-        const payload = { customerCuid: cuid, ...formData };
+        // build payload with the API-facing integrationType
+        const payload = {
+            customerCuid: cuid,
+            integrationType,
+            ...formData,
+        };
 
         let failedIndex = startIndex;
-
         try {
             for (let i = startIndex; i < steps.length; i++) {
                 failedIndex = i;
                 setCurrentStep(i);
                 await callIntegrationEndpoint(endpoints[i], payload);
             }
-            // all succeeded:
+            // all succeeded
             setApiSuccess(true);
-            alert("Integration completed successfully!");
             setCurrentStep(-1);
             setLastFailedStep(null);
         } catch (err) {
-            // use failedIndex, not currentStep
             setError(`Failed at "${steps[failedIndex]}" step: ${err.message}`);
             setLastFailedStep(failedIndex);
         } finally {
@@ -106,7 +109,7 @@ const Integrations = () => {
         <div className="integration-container">
             <h2>Integration Settings</h2>
 
-            {/* Form Inputs */}
+            {/* Integration Type selector */}
             <div className="form-group">
                 <label>Integration Type</label>
                 <select
@@ -114,14 +117,15 @@ const Integrations = () => {
                     onChange={(e) => setIntegrationType(e.target.value)}
                     disabled={isRunning}
                 >
-                    {integrationOptions.map((opt) => (
-                        <option key={opt} value={opt}>
-                            {opt}
+                    {integrationOptions.map(({ label, value }) => (
+                        <option key={value} value={value}>
+                            {label}
                         </option>
                     ))}
                 </select>
             </div>
 
+            {/* Other form inputs */}
             {[
                 ["Git Username", "gitUsername", "text"],
                 ["Personal Access Token", "personalAccessToken", "password"],

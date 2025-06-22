@@ -19,11 +19,20 @@ const LabelManagement = () => {
         setError(null);
         try {
             const cuid = localStorage.getItem("uuid");
-            if (!cuid) throw new Error("No customer UUID in localStorage");
+            if (!cuid) {
+                setError("No customer UUID in localStorage");
+                return;
+            }
+
             const res = await fetch(
-                `http://localhost:8082/api/label/customer/${cuid}`
+                `http://api.techhaans.com/api/label/customer/${cuid}`
             );
-            if (!res.ok) throw new Error(`API error ${res.status}`);
+
+            if (!res.ok) {
+                setError(`API error ${res.status}`);
+                return;
+            }
+
             const { data } = await res.json();
             const fetched = data.map((label) => ({
                 lid: label.labelId,
@@ -41,22 +50,21 @@ const LabelManagement = () => {
                     {}
                 ),
             }));
+
             setLabels(fetched);
             setOriginalLabels(fetched);
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            setError("An unexpected error occurred while fetching labels.");
         } finally {
             setLoading(false);
         }
     }, []);
 
-    // fetch labels on mount
     useEffect(() => {
         fetchLabels();
     }, [fetchLabels]);
 
-    // Filter + pagination
     const filtered = useMemo(() => {
         const lower = searchTerm.toLowerCase();
         return labels.filter(
@@ -73,7 +81,6 @@ const LabelManagement = () => {
         currentPage * PAGE_SIZE
     );
 
-    // Keep selection valid if filter removes it
     useEffect(() => {
         if (
             selectedLabelId != null &&
@@ -84,9 +91,6 @@ const LabelManagement = () => {
         }
     }, [filtered, selectedLabelId]);
 
-    const selected = labels.find((l) => l.lid === selectedLabelId);
-
-    // Handle changes to translations
     const handleTranslationChange = (lang, field, value) => {
         setLabels(prev =>
             prev.map(label => {
@@ -106,30 +110,27 @@ const LabelManagement = () => {
         );
     };
 
-    // Handle active status change
-    const handleActiveChange = (e) => {
-        const isActive = e.target.checked;
-        setLabels(prev =>
-            prev.map(label =>
-                label.lid !== selectedLabelId ? label : { ...label, isActive }
-            )
-        );
-    };
-
     const handleSave = async () => {
         if (!selected) return;
+
         setSaving(true);
         setError(null);
         try {
             const cuid = localStorage.getItem("uuid");
-            if (!cuid) throw new Error("No customer UUID in localStorage");
+            if (!cuid) {
+                setError("No customer UUID in localStorage");
+                return;
+            }
+            console.log("Saving changes for label:", selected);
+
         } catch (err) {
             console.error(err);
-            setError(err.message);
+            setError("An error occurred while saving.");
         } finally {
             setSaving(false);
         }
     };
+
 
     const handleCancel = () => {
         setLabels(originalLabels);
@@ -141,14 +142,12 @@ const LabelManagement = () => {
         if (p < 1 || p > totalPages) return;
         setCurrentPage(p);
     };
-
+    const selected = labels.find((l) => l.lid === selectedLabelId);
     return (
         <div className="label-management-container">
-            {/* Global loading / error banner */}
             {loading && <div className="banner">Loading labels…</div>}
             {error && <div className="banner error">Error: {error}</div>}
 
-            {/* Left table */}
             <div className="label-table">
                 <h2>Labels</h2>
                 <input
@@ -211,7 +210,6 @@ const LabelManagement = () => {
                     </tbody>
                 </table>
 
-                {/* Pagination */}
                 <div className="pagination">
                     <button
                         onClick={() => goToPage(currentPage - 1)}

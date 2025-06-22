@@ -1,24 +1,18 @@
 import React, { useState, useContext, useEffect } from "react";
-import "./NavBarAfterLogin.scss";
+import styles from "./NavBarAfterLogin.module.scss";
 import logo from "../../assests/logo.jpeg";
 import { NavLink, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../AuthContext";
 
 const NavBarAfterLogin = () => {
     const [show, setShow] = useState(false);
-    const navigate = useNavigate();
-    const { logout } = useContext(AuthContext);
-    const userName = localStorage.getItem("fullName");
-    const handleLogout = () => {
-        logout();
-        navigate("/Login");
-    };
     const [scrolled, setScrolled] = useState(false);
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const userName = localStorage.getItem("fullName");
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 10);
-        };
+        const handleScroll = () => setScrolled(window.scrollY > 10);
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
@@ -29,26 +23,32 @@ const NavBarAfterLogin = () => {
         { to: "/LanguageConfiguration", label: "Language Settings" },
         { to: "/LabelManagement", label: "Labels" },
         { to: "/Integrations", label: "Integrations" },
+        { to: "/Help", label: "Help" },
     ];
 
+    const handleLogout = () => {
+        logout();
+        navigate("/Login");
+    };
+
+    // simple helper to merge classes
+    const merge = (...classes) => classes.filter(Boolean).join(" ");
+
     return (
-        <header
-            className={`header animated-css-bgm ${scrolled ? "scrolled" : ""}`}
-            style={{ position: "sticky" }}
-        >
-            <nav className="navbar g-0 d-flex justify-content-between align-items-center">
-                <a href="/" className="nav-logo d-flex justify-content-center align-self-center">
-                    <img src={logo} className="logo" alt="logo" loading="lazy" />
+        <header className={merge(styles.header, scrolled && styles.scrolled)}>
+            <nav className={styles.navbar}>
+                <a href="/" className={styles.navLogo}>
+                    <img src={logo} className={styles.logo} alt="logo" loading="lazy" />
                 </a>
 
-                <ul className={`nav-menu d-flex justify-content-center align-items-center ${show ? "active" : ""}`}>
+                <ul className={merge(styles.navMenu, show && styles.active)}>
                     {links.map(({ to, label, end }) => (
-                        <li className="nav-item" key={to}>
+                        <li className={styles.navItem} key={to}>
                             <NavLink
                                 to={to}
                                 end={end}
                                 className={({ isActive }) =>
-                                    isActive ? "nav-link activenav" : "nav-link"
+                                    merge(styles.navLink, isActive && styles.activenav)
                                 }
                                 onClick={() => setShow(false)}
                             >
@@ -58,17 +58,30 @@ const NavBarAfterLogin = () => {
                     ))}
                 </ul>
 
-                <div className="nav-buttons d-flex align-items-center gap-3">
-                    {userName && <span className="username-text">Hello, {userName}</span>}
-                    <button className="logout-btn" onClick={handleLogout}>
-                        Logout
-                    </button>
+                <div className={styles.navButtons}>
+                    {/* only show both username + logout when menu is closed */}
+                    {!show && userName && (
+                        <>
+              <span className={styles.usernameText}>
+                Hello, {userName}
+              </span>
+                            <button
+                                className={styles.logoutBtn}
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </button>
+                        </>
+                    )}
                 </div>
 
-                <div className={`hamburger ${show ? "active" : ""}`} onClick={() => setShow(!show)}>
-                    <span className="bar"></span>
-                    <span className="bar"></span>
-                    <span className="bar"></span>
+                <div
+                    className={merge(styles.hamburger, show && styles.active)}
+                    onClick={() => setShow((s) => !s)}
+                >
+                    <span className={styles.bar}></span>
+                    <span className={styles.bar}></span>
+                    <span className={styles.bar}></span>
                 </div>
             </nav>
         </header>

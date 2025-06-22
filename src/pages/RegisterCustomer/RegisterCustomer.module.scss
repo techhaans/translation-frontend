@@ -59,6 +59,37 @@
         }
       }
 
+      /* new phone wrapper to match your design */
+      .phoneInput {
+        display: flex;
+        margin-bottom: 1.5em;
+
+        select,
+        input {
+          border: 1px solid #d1d1d1;
+          padding: 10px;
+          font-size: 1em;
+          font-family: inherit;
+
+          &::placeholder {
+            color: #9c9c9c;
+          }
+        }
+
+        select {
+          border-right: none;
+          border-top-left-radius: 8px;
+          border-bottom-left-radius: 8px;
+          width: 20%;
+        }
+
+        input {
+          border-top-right-radius: 8px;
+          border-bottom-right-radius: 8px;
+          width: 80%;
+        }
+      }
+
       .submitBtn {
         background-color: #17b5e2;
         color: white;

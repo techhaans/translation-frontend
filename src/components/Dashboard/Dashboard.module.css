@@ -1,4 +1,4 @@
-.dashboard-container {
+.dashboardContainer {
     padding: 2rem;
     background: linear-gradient(to right, #eef2f7, #f9fbfc);
     min-height: 100vh;
@@ -6,7 +6,7 @@
     color: #1f2937;
 }
 
-.dashboard-header {
+.dashboardHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -14,7 +14,7 @@
     margin-bottom: 2rem;
 }
 
-.dashboard-header h2 {
+.dashboardHeader h2 {
     font-size: 2rem;
     font-weight: 600;
 }
@@ -53,14 +53,14 @@
     color: #2563eb;
 }
 
-.charts-grid {
+.chartsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
 
-.chart-card {
+.chartCard {
     background: white;
     padding: 1.5rem;
     border-radius: 15px;
@@ -68,7 +68,7 @@
     height: 100%;
 }
 
-.table-container {
+.tableContainer {
     background: white;
     padding: 1.5rem;
     border-radius: 15px;
@@ -86,7 +86,8 @@ thead {
     background-color: #f3f4f6;
 }
 
-th, td {
+th,
+td {
     padding: 0.75rem 1rem;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;

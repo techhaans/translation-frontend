@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./CustomerProfile.css";
+import styles from "./CustomerProfile.module.css";
 
 const CustomerProfile = () => {
     const [profile, setProfile] = useState({
@@ -19,9 +19,8 @@ const CustomerProfile = () => {
                 const cUUID = localStorage.getItem("uuid");
                 if (!cUUID) return;
 
-
-                const data = await axios.get(
-                    `http://localhost:8082/api/customer-info/profile?cuid=${cUUID}`
+                const { data } = await axios.get(
+                    `http://api.techhaans.com/api/customer-info/profile?cuid=${cUUID}`
                 );
 
                 setProfile({
@@ -37,18 +36,19 @@ const CustomerProfile = () => {
                 console.error("Failed to fetch profile:", err);
             }
         };
+
         fetchProfile();
     }, []);
 
-    const handleChange = (e) => {
-        const { id, value } = e.target;
-        setProfile((p) => ({ ...p, [id]: value }));
-    };
+    // const handleChange = (e) => {
+    //     const { id, value } = e.target;
+    //     setProfile((p) => ({ ...p, [id]: value }));
+    // };
 
     return (
-        <div className="profile-container">
+        <div className={styles.profileContainer}>
             <h2>Customer Profile</h2>
-            <form className="profile-form">
+            <form className={styles.profileForm}>
                 <label>
                     Customer Name:
                     <input
@@ -97,7 +97,7 @@ const CustomerProfile = () => {
                     Plan Expiry Date:
                     <input
                         id="planExpiry"
-                        type="text"                      /* changed from date to text */
+                        type="text"
                         value={profile.planExpiry}
                         readOnly
                     />
@@ -107,7 +107,7 @@ const CustomerProfile = () => {
                     Registration Date:
                     <input
                         id="registrationDate"
-                        type="text"                      /* changed from date to text */
+                        type="text"
                         value={profile.registrationDate}
                         readOnly
                     />

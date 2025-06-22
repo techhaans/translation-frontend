@@ -29,6 +29,7 @@ import AboutUs from "./pages/AboutUs/AboutUs";
 import Careers from "./pages/Careers/Careers";
 import ProofreadersIntro from "./pages/ProofreadersIntro/ProofreadersIntro";
 import Clients from "./pages/Clients/Clients";
+import Help from "./components/Help/Help";
 
 import ProofreaderProfile from "./components/ProofreaderProfile/ProofreaderProfile";
 import ProofreaderTasks from "./components/ProofreaderTasks/ProofreaderTasks";
@@ -79,6 +80,7 @@ function AppContent() {
                         <Route path="/LanguageConfiguration" element={<LanguageConfiguration />} />
                         <Route path="/LabelManagement" element={<LabelManagement />} />
                         <Route path="/Integrations" element={<Integrations />} />
+                        <Route path="/Help" element={<Help />} />
                     </Route>
 
                     {/* Fallback 404 */}

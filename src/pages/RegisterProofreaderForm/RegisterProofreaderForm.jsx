@@ -95,7 +95,7 @@ const RegisterProofReaderForm = () => {
                 });
 
                 const res = await axios.post(
-                    "http://localhost:8082/api/auth/register/proofreader",
+                    "http://api.techhaans.com/api/auth/register/proofreader",
                     formData,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );

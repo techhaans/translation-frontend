@@ -2,49 +2,26 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Select from "react-select";
 import "./LanguageConfiguration.css";
+import {allLanguages} from "../../data-json/allLanguages";
 
-const allLanguages = [
-    { id: 38, name: "English" },
-    { id: 40, name: "Spanish" },
-    { id: 183, name: "Chinese" },
-    { id: 165, name: "Turkish" },
-    { id: 48, name: "French" },
-    { id: 33, name: "German" },
-    { id: 172, name: "Urdu" },
-    { id: 58, name: "Hindi" },
-    { id: 127, name: "Panjabi" },
-    { id: 43, name: "Persian" },
-    { id: 175, name: "Vietnamese" },
-    { id: 131, name: "Portuguese" },
-    { id: 75, name: "Japanese" },
-    { id: 85, name: "Korean" },
-    { id: 108, name: "Malay" },
-    { id: 107, name: "Marathi" },
-    { id: 54, name: "Gujarati" },
-    { id: 156, name: "Tamil" },
-    { id: 157, name: "Telugu" },
-    { id: 130, name: "Pashto" },
-    { id: 88, name: "Kurdish" },
-    { id: 60, name: "Croatian" },
-    { id: 136, name: "Russian" },
-    { id: 171, name: "Ukrainian" },
-    { id: 155, name: "Swahili" },
-];
-
+// ─── 2) Build react-select options ─────────────────────────────────────────────
 const languageOptions = allLanguages.map(({ name }) => ({
     value: name,
     label: name,
 }));
 
 const LanguageConfiguration = () => {
-    const [defaultLanguage, setDefaultLanguage] = useState("English");
+    // 3) State
+    const [defaultLanguageOpt, setDefaultLanguageOpt] = useState(
+        languageOptions.find((o) => o.value === "English")
+    );
     const [supportedLanguages, setSupportedLanguages] = useState([]);
     const [translationQuota, setTranslationQuota] = useState("Loading...");
     const [statusMessage, setStatusMessage] = useState("");
     const [statusType, setStatusType] = useState(""); // "success" | "error"
     const [fetchError, setFetchError] = useState("");
 
-    // 1) Fetch existing config on mount
+    // ─── 4) Fetch existing config on mount ────────────────────────────────────────
     useEffect(() => {
         const fetchLanguageConfig = async () => {
             const cuid = localStorage.getItem("uuid");
@@ -52,7 +29,7 @@ const LanguageConfiguration = () => {
 
             try {
                 const { data } = await axios.get(
-                    `http://localhost:8082/api/customer_Lang/config/${cuid}`
+                    `http://api.techhaans.com/api/customer_Lang/config/${cuid}`
                 );
                 const {
                     defaultLanguageName,
@@ -61,17 +38,20 @@ const LanguageConfiguration = () => {
                 } = data.data;
 
                 if (defaultLanguageName) {
-                    setDefaultLanguage(defaultLanguageName);
+                    const opt = languageOptions.find(
+                        (o) => o.value === defaultLanguageName
+                    );
+                    if (opt) setDefaultLanguageOpt(opt);
                 }
 
 
                 if (Array.isArray(supportedLanguagenames)) {
                     const selected = supportedLanguagenames
-                        // filter out any that match defaultLanguageName
                         .filter((n) => n !== defaultLanguageName)
-                        .map((name) => languageOptions.find((opt) => opt.value === name))
+                        .map((name) =>
+                            languageOptions.find((o) => o.value === name)
+                        )
                         .filter(Boolean);
-
                     setSupportedLanguages(selected);
                 }
 
@@ -87,13 +67,25 @@ const LanguageConfiguration = () => {
         fetchLanguageConfig();
     }, []);
 
-    // 2) Whenever defaultLanguage changes, remove it from supportedLanguages
+    // ─── 5) Keep supportedLanguages ≠ defaultLanguage ────────────────────────────
     useEffect(() => {
         setSupportedLanguages((prev) =>
-            prev.filter((opt) => opt.value !== defaultLanguage)
+            prev.filter((opt) => opt.value !== defaultLanguageOpt?.value)
         );
-    }, [defaultLanguage]);
+    }, [defaultLanguageOpt]);
 
+    // ─── 6) Auto‐clear success after 3s ───────────────────────────────────────────
+    useEffect(() => {
+        if (statusType === "success") {
+            const timer = setTimeout(() => {
+                setStatusMessage("");
+                setStatusType("");
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [statusType]);
+
+    // ─── 7) Submit → send NAMES to match your DTO ────────────────────────────────
     const handleSubmit = async () => {
         setStatusMessage("");
         const cuid = localStorage.getItem("uuid");
@@ -103,29 +95,24 @@ const LanguageConfiguration = () => {
             return;
         }
 
-        const defaultLangObj = allLanguages.find(
-            (lang) => lang.name === defaultLanguage
-        );
-        const supportedLangIds = supportedLanguages
-            .map((lang) => allLanguages.find((l) => l.name === lang.value)?.id)
-            .filter((id) => id != null);
-
-        if (!defaultLangObj || supportedLangIds.length === 0) {
-            setStatusMessage("❌ Please select a default and at least one other language.");
+        if (!defaultLanguageOpt || supportedLanguages.length === 0) {
+            setStatusMessage(
+                "❌ Please select a default and at least one other language."
+            );
             setStatusType("error");
             return;
         }
 
         const payload = {
             cuid,
-            defaultLanguageId: defaultLangObj.id,
-            supportedLanguageIds: supportedLangIds,
+            defaultLanguage: defaultLanguageOpt.value,
+            supportedLanguages: supportedLanguages.map((opt) => opt.value),
         };
 
         try {
 
             const resp = await axios.post(
-                "http://localhost:8082/api/customer_Lang/configure",
+                "http://api.techhaans.com/api/customer_Lang/configure",
                 payload,
                 { headers: { "Content-Type": "application/json" } }
             );
@@ -150,7 +137,9 @@ const LanguageConfiguration = () => {
         <div className="lang-config-container">
             <h2>Language Configuration</h2>
 
-            {fetchError && <div className="status-message error">{fetchError}</div>}
+            {fetchError && (
+                <div className="status-message error">{fetchError}</div>
+            )}
 
             <form
                 className="lang-config-form"
@@ -158,17 +147,14 @@ const LanguageConfiguration = () => {
             >
                 <label>
                     Default Language:
-                    <select
-                        value={defaultLanguage}
-                        onChange={(e) => setDefaultLanguage(e.target.value)}
-                        className="default-select"
-                    >
-                        {allLanguages.map(({ id, name }) => (
-                            <option key={id} value={name}>
-                                {name}
-                            </option>
-                        ))}
-                    </select>
+                    <Select
+                        options={languageOptions}
+                        value={defaultLanguageOpt}
+                        onChange={setDefaultLanguageOpt}
+                        isSearchable
+                        classNamePrefix="react-select"
+                        placeholder="Select default..."
+                    />
                 </label>
 
                 <label>
@@ -176,9 +162,8 @@ const LanguageConfiguration = () => {
                     <Select
                         isMulti
                         isSearchable
-                        // 3) Filter out current defaultLanguage from the list
                         options={languageOptions.filter(
-                            (opt) => opt.value !== defaultLanguage
+                            (opt) => opt.value !== defaultLanguageOpt?.value
                         )}
                         value={supportedLanguages}
                         onChange={setSupportedLanguages}
@@ -188,19 +173,26 @@ const LanguageConfiguration = () => {
                 </label>
 
                 <div className="quota-row">
-                    <span className="quota-label">Translation Quota Remaining:</span>
-                    <strong className="quota-value">{translationQuota}</strong>
+          <span className="quota-label">
+            Translation Quota Remaining:
+          </span>
+                    <strong className="quota-value">
+                        {translationQuota}
+                    </strong>
                 </div>
-
-                {statusMessage && (
-                    <div className={`status-message ${statusType}`}>
-                        {statusMessage}
-                    </div>
-                )}
 
                 <button type="button" onClick={handleSubmit}>
                     Save Settings
                 </button>
+
+                {statusMessage && (
+                    <div className={`status-message ${statusType}`}>
+                        {statusMessage}
+                        {statusType === "success" && (
+                            <div className="progress-bar" />
+                        )}
+                    </div>
+                )}
             </form>
         </div>
     );
