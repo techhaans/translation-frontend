@@ -1,0 +1,127 @@
+.assignContainer {
+    padding: 30px;
+    background: #f8f9fa;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    color: #222;
+}
+
+.taskRow {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.select {
+    padding: 8px 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    flex: 1;
+}
+
+.select:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.removeBtn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.removeBtn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.addBtn,
+.saveBtn {
+    padding: 10px 20px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.addBtn {
+    background-color: #28a745;
+    color: white;
+}
+
+.saveBtn {
+    background-color: #007bff;
+    color: white;
+}
+
+.addBtn:hover {
+    background-color: #218838;
+}
+
+.saveBtn:hover {
+    background-color: #0056b3;
+}
+
+.tableSection {
+    margin-top: 40px;
+    background: white;
+    padding: 24px;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.tableTitle {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.table th,
+.table td {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 14px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #f1f3f5;
+    color: #222;
+}
+
+.deleteBtn {
+    background-color: #dc3545;
+    color: white;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
