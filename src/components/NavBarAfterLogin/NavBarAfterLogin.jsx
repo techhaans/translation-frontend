@@ -23,6 +23,7 @@ const NavBarAfterLogin = () => {
         { to: "/LanguageConfiguration", label: "Language Settings" },
         { to: "/LabelManagement", label: "Labels" },
         { to: "/Integrations", label: "Integrations" },
+        { to: "/AssignTasks", label: "AssignTasks" },
         { to: "/Help", label: "Help" },
     ];
 

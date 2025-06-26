@@ -35,7 +35,7 @@ import ProofreaderProfile from "./components/ProofreaderProfile/ProofreaderProfi
 import ProofreaderTasks from "./components/ProofreaderTasks/ProofreaderTasks";
 import ProofreaderEarnings from "./components/ProofreaderEarnings/ProofreaderEarnings";
 import ProofreaderDashboard from "./components/ProofreaderDashboard/ProofreaderDashboard";
-
+import AssignTasks from "./components/AssignTasks/AssignTasks";
 function AppContent() {
     const { isLoggedIn, userRole } = useContext(AuthContext);
 
@@ -80,6 +80,7 @@ function AppContent() {
                         <Route path="/LanguageConfiguration" element={<LanguageConfiguration />} />
                         <Route path="/LabelManagement" element={<LabelManagement />} />
                         <Route path="/Integrations" element={<Integrations />} />
+                        <Route path="/AssignTasks" element={<AssignTasks />} />
                         <Route path="/Help" element={<Help />} />
                     </Route>
 
