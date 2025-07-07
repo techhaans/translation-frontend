@@ -5,52 +5,56 @@ import { useFormik } from "formik";
 import axios from "axios";
 import styles from "./RegisterCustomer.module.scss";
 import { AuthContext } from "../../AuthContext";
-
-// full list of countries + dial codes
-const countryList = [
-    { name: "India", code: "+91" },
-    { name: "USA",   code: "+1"  },
-    { name: "UK",    code: "+44" },
-];
-
-// how many digits each country’s local number should be
-const phoneLengthMap = {
-    "+91": 10,
-    "+1":  10,
-    "+44": 10,
-};
+import Select from "react-select";
 
 const RegisterCustomerForm = () => {
-    const [membershipTypes, setMembershipTypes] = useState([]);
+    const [countries, setCountries] = useState([]);
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { login } = useContext(AuthContext);
 
-    // refs for scrolling to errors
+    const countryOptions = countries.map(c => ({
+        value: c.countryName,
+        label: c.countryName
+    }));
+
     const fieldRefs = {
         fullName:        useRef(null),
         email:           useRef(null),
         password:        useRef(null),
         confirmPassword: useRef(null),
-        companyName:     useRef(null),
         country:         useRef(null),
         phoneCode:       useRef(null),
         phoneNumber:     useRef(null),
+        companyName:     useRef(null),
         membershipId:    useRef(null),
     };
     const errorMessageRef = useRef(null);
 
+    // 1) Fetch country list on mount
     useEffect(() => {
-        setMembershipTypes([
-            { id: 1, name: "TRIAL" },
-            { id: 2, name: "BASIC_MONTHLY" },
-            { id: 3, name: "BUSINESS_MONTHLY" },
-            { id: 4, name: "BASIC_YEARLY" },
-            { id: 5, name: "BUSINESS_YEARLY" },
-        ]);
+        axios
+            .get("http://localhost:8082/api/languages/allByCountry")
+            .then((res) => {
+                const rawCountries = res.data.data || [];
+
+                const uniqueCountriesMap = new Map();
+                rawCountries.forEach((c) => {
+                    if (!uniqueCountriesMap.has(c.countryName)) {
+                        uniqueCountriesMap.set(c.countryName, c);
+                    }
+                });
+
+                const uniqueCountries = Array.from(uniqueCountriesMap.values());
+                setCountries(uniqueCountries);
+            })
+            .catch((err) => {
+                console.error("Could not load country list", err);
+            });
     }, []);
+
 
     const formik = useFormik({
         initialValues: {
@@ -76,34 +80,15 @@ const RegisterCustomerForm = () => {
             confirmPassword: Yup.string()
                 .required("Please confirm your password")
                 .oneOf([Yup.ref("password"), null], "Passwords must match"),
-
-            country:    Yup.string().required("Country is required"),
-            phoneCode:  Yup.string().required("Country code is required"),
-
-            phoneNumber: Yup.string()
+            country:       Yup.string().required("Country is required"),
+            phoneCode:     Yup.string().required("Country code is required"),
+            phoneNumber:   Yup.string()
                 .required("Phone number is required")
                 .matches(/^[0-9]+$/, "Phone number must contain only digits")
-                .test({
-                    name: "len-by-country",
-                    // generate an appropriate message
-                    message: ({ parent }) => {
-                        const code = parent?.phoneCode;
-                        const expected = phoneLengthMap[code];
-                        return expected
-                            ? `Phone number must be exactly ${expected} digits for ${code}`
-                            : "";
-                    },
-                    // perform the actual length check
-                    test: (value, { parent }) => {
-                        const code = parent?.phoneCode;
-                        const expected = phoneLengthMap[code];
-                        if (!expected) return true;                // no rule defined ⇒ pass
-                        return Boolean(value && value.length === expected);
-                    },
-                }),
-
-            companyName:  Yup.string().required("Company name is required"),
-            membershipId: Yup.string().required("Membership is required"),
+                .min(7, "Phone number must be at least 7 digits")
+                .max(15, "Phone number cannot exceed 15 digits"),
+            companyName:   Yup.string().required("Company name is required"),
+            membershipId:  Yup.string().required("Membership is required"),
         }),
 
         onSubmit: async (values) => {
@@ -124,7 +109,7 @@ const RegisterCustomerForm = () => {
                 };
 
                 const registerRes = await axios.post(
-                    "http://api.techhaans.com/api/auth/register/customer",
+                    "http://localhost:8082/api/auth/register/customer",
                     payload
                 );
 
@@ -132,9 +117,9 @@ const RegisterCustomerForm = () => {
                     registerRes.data.status === "SUCCESS" &&
                     registerRes.data.message.includes("Customer registered successfully")
                 ) {
-                    setSuccessMessage("Registration successful! Logging you in...");
+                    setSuccessMessage("Registration successful! Logging you in…");
                     const loginRes = await axios.post(
-                        "http://api.techhaans.com/api/auth/login",
+                        "http://localhost:8082/api/auth/login",
                         { email: values.email, password: values.password, role: "CUSTOMER" }
                     );
                     const { token, fullName, email, role, userId } = loginRes.data.data;
@@ -167,7 +152,6 @@ const RegisterCustomerForm = () => {
         validateOnChange: true,
     });
 
-    // scroll to first invalid field
     const scrollToFirstError = () => {
         for (const key of Object.keys(formik.errors)) {
             const ref = fieldRefs[key];
@@ -178,19 +162,6 @@ const RegisterCustomerForm = () => {
         }
     };
 
-    const handleCountryChange = (e) => {
-        const name = e.target.value;
-        formik.setFieldValue("country", name);
-        const found = countryList.find((c) => c.name === name);
-        formik.setFieldValue("phoneCode", found ? found.code : "");
-    };
-
-    const handleCodeChange = (e) => {
-        const code = e.target.value;
-        formik.setFieldValue("phoneCode", code);
-        const found = countryList.find((c) => c.code === code);
-        formik.setFieldValue("country", found ? found.name : "");
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -216,7 +187,6 @@ const RegisterCustomerForm = () => {
                         </div>
                     )}
 
-                    {/* Full Name */}
                     <label htmlFor="fullName">Full Name</label>
                     <input
                         ref={fieldRefs.fullName}
@@ -232,7 +202,6 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.fullName}</div>
                     )}
 
-                    {/* Email */}
                     <label htmlFor="email">Email</label>
                     <input
                         ref={fieldRefs.email}
@@ -248,7 +217,6 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.email}</div>
                     )}
 
-                    {/* Password */}
                     <label htmlFor="password">Password</label>
                     <input
                         ref={fieldRefs.password}
@@ -264,7 +232,6 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.password}</div>
                     )}
 
-                    {/* Confirm Password */}
                     <label htmlFor="confirmPassword">Confirm Password</label>
                     <input
                         ref={fieldRefs.confirmPassword}
@@ -280,58 +247,70 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.confirmPassword}</div>
                     )}
 
-                    {/* Country */}
                     <label htmlFor="country">Country</label>
-                    <select
-                        ref={fieldRefs.country}
-                        id="country"
+                    <Select
+                        inputId="country"
                         name="country"
-                        value={formik.values.country}
-                        onChange={handleCountryChange}
-                        onBlur={formik.handleBlur}
-                    >
-                        <option value="">Select Country</option>
-                        {countryList.map((c) => (
-                            <option key={c.name} value={c.name}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
+                        options={countryOptions}
+                        value={
+                            formik.values.country
+                                ? { value: formik.values.country, label: formik.values.country }
+                                : null
+                        }
+                        onChange={async (option) => {
+                            formik.setFieldValue("country", option?.value || "");
+                            formik.setFieldValue("phoneCode", "");
+
+                            if (option?.value) {
+                                try {
+                                    const { data } = await axios.get(
+                                        `http://localhost:8082/api/languages/phone-code/${encodeURIComponent(option.value)}`
+                                    );
+                                    formik.setFieldValue("phoneCode", data.data || "");
+                                } catch (err) {
+                                    console.error("Failed to fetch phone code", err);
+                                }
+                            }
+                        }}
+                        onBlur={() => formik.setFieldTouched("country", true)}
+                        isSearchable
+                        placeholder="Select country..."
+                        styles={{
+                            control: (provided) => ({ ...provided, borderRadius: 8, borderColor: "#d1d1d1" }),
+                        }}
+                    />
                     {formik.touched.country && formik.errors.country && (
                         <div className={styles.error}>{formik.errors.country}</div>
                     )}
 
-                    {/* Phone (code + number) */}
-                    <label>Phone Number</label>
-                    <div className={styles.phoneInput}>
-                        <select
+
+                    <label htmlFor="phoneNumberGroup">Phone Number</label>
+                    <div className={styles.phoneInputGroup}>
+                        <input
                             ref={fieldRefs.phoneCode}
                             name="phoneCode"
+                            type="text"
                             value={formik.values.phoneCode}
-                            onChange={handleCodeChange}
-                        >
-                            <option value="">+</option>
-                            {countryList.map((c) => (
-                                <option key={c.code} value={c.code}>
-                                    {c.code}
-                                </option>
-                            ))}
-                        </select>
+                            disabled
+                            className={styles.phoneCode}
+                        />
+                        <div className={styles.separator} />
                         <input
                             ref={fieldRefs.phoneNumber}
+                            id="phoneNumber"
                             name="phoneNumber"
                             type="text"
                             placeholder="Enter your phone number"
                             value={formik.values.phoneNumber}
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
+                            className={styles.phoneNumber}
                         />
                     </div>
                     {formik.touched.phoneNumber && formik.errors.phoneNumber && (
                         <div className={styles.error}>{formik.errors.phoneNumber}</div>
                     )}
 
-                    {/* Company Name */}
                     <label htmlFor="companyName">Company Name</label>
                     <input
                         ref={fieldRefs.companyName}
@@ -347,7 +326,6 @@ const RegisterCustomerForm = () => {
                         <div className={styles.error}>{formik.errors.companyName}</div>
                     )}
 
-                    {/* Membership */}
                     <label htmlFor="membershipId">Membership Type</label>
                     <select
                         ref={fieldRefs.membershipId}
@@ -358,17 +336,25 @@ const RegisterCustomerForm = () => {
                         onBlur={formik.handleBlur}
                     >
                         <option value="">Select Membership</option>
-                        {membershipTypes.map((m) => (
-                            <option key={m.id} value={m.id}>
-                                {m.name}
-                            </option>
-                        ))}
+                        {[1, 2, 3, 4, 5].map((id) => {
+                            const name = {
+                                1: "TRIAL",
+                                2: "BASIC_MONTHLY",
+                                3: "BUSINESS_MONTHLY",
+                                4: "BASIC_YEARLY",
+                                5: "BUSINESS_YEARLY",
+                            }[id];
+                            return (
+                                <option key={id} value={id}>
+                                    {name}
+                                </option>
+                            );
+                        })}
                     </select>
                     {formik.touched.membershipId && formik.errors.membershipId && (
                         <div className={styles.error}>{formik.errors.membershipId}</div>
                     )}
 
-                    {/* Submit */}
                     <button type="submit" className={styles.submitBtn} disabled={loading}>
                         {loading ? "Registering…" : "Register"}
                     </button>

@@ -1,50 +1,44 @@
-import React, {useState, useRef, useEffect, useContext} from "react";
+import React, {
+    useState,
+    useRef,
+    useEffect,
+    useContext,
+    useMemo,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import styles from "./proofreader.register.module.css";
-import {AuthContext} from "../../AuthContext";
+import { AuthContext } from "../../AuthContext";
 import Select from "react-select";
 
-
-const languageOptions = [
-    { value: "English", label: "English" },
-    { value: "Spanish", label: "Spanish" },
-    { value: "Chinese", label: "Chinese" },
-    { value: "Turkish", label: "Turkish" },
-    { value: "French", label: "French" },
-    { value: "German", label: "German" },
-    { value: "Urdu", label: "Urdu" },
-    { value: "Hindi", label: "Hindi" },
-    { value: "Panjabi", label: "Panjabi" },
-    { value: "Persian", label: "Persian" },
-    { value: "Vietnamese", label: "Vietnamese" },
-    { value: "Portuguese", label: "Portuguese" },
-    { value: "Japanese", label: "Japanese" },
-    { value: "Korean", label: "Korean" },
-    { value: "Malay", label: "Malay" },
-    { value: "Marathi", label: "Marathi" },
-    { value: "Gujarati", label: "Gujarati" },
-    { value: "Tamil", label: "Tamil" },
-    { value: "Telugu", label: "Telugu" },
-    { value: "Pashto", label: "Pashto" },
-    { value: "Kurdish", label: "Kurdish" },
-    { value: "Croatian", label: "Croatian" },
-    { value: "Russian", label: "Russian" },
-    { value: "Ukrainian", label: "Ukrainian" },
-    { value: "Swahili", label: "Swahili" },
-];
-
-
-const RegisterProofReaderForm = () => {
+export default function RegisterProofReaderForm() {
     const navigate = useNavigate();
+    const { languages, langsLoading, langsError, login } = useContext(AuthContext);
+
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const { login } = useContext(AuthContext);
     const messageRef = useRef(null);
-    const formRef = useRef(null);
+
+    const languageOptions = useMemo(
+        () =>
+            languages.map((lang) => ({
+                value: lang.languageCode,
+                label: lang.languageName,
+            })),
+        [languages]
+    );
+
+    const scrollToMessage = () => {
+        if (messageRef.current) {
+            messageRef.current.scrollIntoView({
+                behavior: "smooth",
+                block: "center",
+            });
+        }
+    };
 
     const formik = useFormik({
         initialValues: {
@@ -61,7 +55,9 @@ const RegisterProofReaderForm = () => {
         },
         validationSchema: Yup.object({
             fullName: Yup.string().required("Full name is required"),
-            email: Yup.string().email("Invalid email").required("Email is required"),
+            email: Yup.string()
+                .email("Invalid email")
+                .required("Email is required"),
             password: Yup.string()
                 .required("Password is required")
                 .min(8, "Password must be at least 8 characters")
@@ -75,7 +71,10 @@ const RegisterProofReaderForm = () => {
                 .typeError("Must be a number")
                 .required("Experience is required"),
             supportedLanguages: Yup.array().min(1, "Select at least one language"),
-            termsAccepted: Yup.boolean().oneOf([true], "You must accept the terms"),
+            termsAccepted: Yup.boolean().oneOf(
+                [true],
+                "You must accept the terms"
+            ),
         }),
         onSubmit: async (values) => {
             setLoading(true);
@@ -83,10 +82,13 @@ const RegisterProofReaderForm = () => {
             setSuccessMessage("");
 
             try {
+                // Build multipart form data
                 const formData = new FormData();
                 Object.entries(values).forEach(([key, value]) => {
                     if (key === "supportedLanguages") {
-                        value.forEach((lang) => formData.append("supportedLanguages", lang));
+                        value.forEach((lang) =>
+                            formData.append("supportedLanguages", lang)
+                        );
                     } else if (key === "resume" && value) {
                         formData.append("resume", value);
                     } else {
@@ -94,57 +96,66 @@ const RegisterProofReaderForm = () => {
                     }
                 });
 
-                const res = await axios.post(
-                    "http://api.techhaans.com/api/auth/register/proofreader",
+                // Registration request
+                const regRes = await axios.post(
+                    "http://localhost:8082/api/auth/register/proofreader",
                     formData,
                     { headers: { "Content-Type": "multipart/form-data" } }
                 );
 
-                if (res.data.status === "SUCCESS") {
+                if (regRes.data.status === "SUCCESS") {
                     setSuccessMessage("Registration successful! Logging you in...");
                     scrollToMessage();
 
-                    const loginRes = await axios.post("https://api.techhaans.com/api/auth/login", {
-                        email: values.email,
-                        password: values.password,
-                        role: "PROOFREADER",
-                    });
-                    console.log(loginRes)
-                    const { token, fullName, email, role, userId, uuid } = loginRes.data.data;
+                    // Auto-login
+                    const loginRes = await axios.post(
+                        "http://localhost:8082/api/auth/login",
+                        {
+                            email: values.email,
+                            password: values.password,
+                            role: "PROOFREADER",
+                        }
+                    );
+
+                    const {
+                        token,
+                        fullName,
+                        email,
+                        role,
+                        userId,
+                        uuid,
+                    } = loginRes.data.data;
+
                     localStorage.setItem("token", token);
                     localStorage.setItem("fullName", fullName);
                     localStorage.setItem("email", email);
                     localStorage.setItem("role", role);
                     localStorage.setItem("userId", userId);
                     localStorage.setItem("uuid", uuid);
-                    login({ token, fullName, email, role, userId });
 
+                    login({ token, fullName, email, role, userId });
                     navigate("/");
                 } else {
                     setErrorMessage("Registration failed.");
                     scrollToMessage();
                 }
             } catch (err) {
-                setErrorMessage(err.response?.data?.message || "Registration failed. Try again.");
+                setErrorMessage(
+                    err.response?.data?.message || "Registration failed. Try again."
+                );
                 scrollToMessage();
             } finally {
                 setLoading(false);
             }
         },
-        validateOnChange: false,
         validateOnBlur: false,
+        validateOnChange: false,
     });
-
-    const scrollToMessage = () => {
-        if (messageRef.current) {
-            messageRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-        }
-    };
 
     useEffect(() => {
         if (formik.isSubmitting && Object.keys(formik.errors).length > 0) {
-            const firstErrorField = Object.keys(formik.errors)[0];
-            const field = document.getElementsByName(firstErrorField)[0];
+            const firstError = Object.keys(formik.errors)[0];
+            const field = document.getElementsByName(firstError)[0];
             if (field) {
                 field.scrollIntoView({ behavior: "smooth", block: "center" });
                 field.focus();
@@ -152,33 +163,69 @@ const RegisterProofReaderForm = () => {
         }
     }, [formik.isSubmitting, formik.errors]);
 
+    if (langsLoading) {
+        return <div>Loading supported languages…</div>;
+    }
+    if (langsError) {
+        return (
+            <div>
+                <p className={styles.error}>
+                    Error loading supported languages. Please try again later.
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.RegisterProofReader}>
-            <div className={styles.centerContent} ref={formRef}>
+            <div className={styles.centerContent}>
                 <form onSubmit={formik.handleSubmit}>
                     <h2>Register as a Proofreader</h2>
-
-                    <div className={styles.label}>
+                    <div>
                         or <a href="/RegisterCustomerForm">Create Customer Account</a>
                     </div>
 
                     <div ref={messageRef}>
-                        {successMessage && <div className={styles.success}>{successMessage}</div>}
-                        {errorMessage && <div className={styles.error}>{errorMessage}</div>}
+                        {successMessage && (
+                            <div className={styles.success}>{successMessage}</div>
+                        )}
+                        {errorMessage && (
+                            <div className={styles.error}>{errorMessage}</div>
+                        )}
                     </div>
 
                     <label>Full Name</label>
-                    <input name="fullName" type="text" value={formik.values.fullName} onChange={formik.handleChange} />
-                    {formik.errors.fullName && <div className={styles.error}>{formik.errors.fullName}</div>}
+                    <input
+                        name="fullName"
+                        type="text"
+                        value={formik.values.fullName}
+                        onChange={formik.handleChange}
+                    />
+                    {formik.errors.fullName && (
+                        <div className={styles.error}>{formik.errors.fullName}</div>
+                    )}
 
                     <label>Email</label>
-                    <input name="email" type="email" value={formik.values.email} onChange={formik.handleChange} />
-                    {formik.errors.email && <div className={styles.error}>{formik.errors.email}</div>}
+                    <input
+                        name="email"
+                        type="email"
+                        value={formik.values.email}
+                        onChange={formik.handleChange}
+                    />
+                    {formik.errors.email && (
+                        <div className={styles.error}>{formik.errors.email}</div>
+                    )}
 
                     <label>Password</label>
-                    <input name="password" type="password" value={formik.values.password} onChange={formik.handleChange} />
-                    {formik.errors.password && <div className={styles.error}>{formik.errors.password}</div>}
+                    <input
+                        name="password"
+                        type="password"
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                    />
+                    {formik.errors.password && (
+                        <div className={styles.error}>{formik.errors.password}</div>
+                    )}
 
                     <label>Confirm Password</label>
                     <input
@@ -187,11 +234,22 @@ const RegisterProofReaderForm = () => {
                         value={formik.values.confirmPassword}
                         onChange={formik.handleChange}
                     />
-                    {formik.errors.confirmPassword && <div className={styles.error}>{formik.errors.confirmPassword}</div>}
+                    {formik.errors.confirmPassword && (
+                        <div className={styles.error}>
+                            {formik.errors.confirmPassword}
+                        </div>
+                    )}
 
                     <label>Phone Number</label>
-                    <input name="phoneNumber" type="text" value={formik.values.phoneNumber} onChange={formik.handleChange} />
-                    {formik.errors.phoneNumber && <div className={styles.error}>{formik.errors.phoneNumber}</div>}
+                    <input
+                        name="phoneNumber"
+                        type="text"
+                        value={formik.values.phoneNumber}
+                        onChange={formik.handleChange}
+                    />
+                    {formik.errors.phoneNumber && (
+                        <div className={styles.error}>{formik.errors.phoneNumber}</div>
+                    )}
 
                     <label>Years of Experience</label>
                     <input
@@ -200,28 +258,34 @@ const RegisterProofReaderForm = () => {
                         value={formik.values.yearsOfExperience}
                         onChange={formik.handleChange}
                     />
-                    {formik.errors.yearsOfExperience && <div className={styles.error}>{formik.errors.yearsOfExperience}</div>}
+                    {formik.errors.yearsOfExperience && (
+                        <div className={styles.error}>
+                            {formik.errors.yearsOfExperience}
+                        </div>
+                    )}
 
                     <label>Resume (docx/pdf, optional)</label>
                     <input
                         name="resume"
                         type="file"
-                        onChange={(event) => formik.setFieldValue("resume", event.currentTarget.files[0])}
+                        onChange={(e) =>
+                            formik.setFieldValue("resume", e.currentTarget.files[0])
+                        }
                     />
 
                     <label>Supported Languages</label>
                     <Select
                         isMulti
                         name="supportedLanguages"
-                        options={languageOptions}  // ← passes the structured options
+                        options={languageOptions}
                         classNamePrefix="react-select"
-                        value={languageOptions.filter(opt =>
+                        value={languageOptions.filter((opt) =>
                             formik.values.supportedLanguages.includes(opt.value)
                         )}
-                        onChange={selected =>
+                        onChange={(selected) =>
                             formik.setFieldValue(
                                 "supportedLanguages",
-                                selected.map(opt => opt.value)
+                                selected.map((opt) => opt.value)
                             )
                         }
                     />
@@ -240,9 +304,15 @@ const RegisterProofReaderForm = () => {
                         />{" "}
                         I accept the terms and conditions
                     </label>
-                    {formik.errors.termsAccepted && <div className={styles.error}>{formik.errors.termsAccepted}</div>}
+                    {formik.errors.termsAccepted && (
+                        <div className={styles.error}>{formik.errors.termsAccepted}</div>
+                    )}
 
-                    <button type="submit" className={styles.submitBtn} disabled={loading}>
+                    <button
+                        type="submit"
+                        className={styles.submitBtn}
+                        disabled={loading}
+                    >
                         {loading ? "Registering..." : "Register"}
                     </button>
 
@@ -253,6 +323,4 @@ const RegisterProofReaderForm = () => {
             </div>
         </div>
     );
-};
-
-export default RegisterProofReaderForm;
+}

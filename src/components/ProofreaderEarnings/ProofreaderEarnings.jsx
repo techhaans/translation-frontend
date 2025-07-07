@@ -4,67 +4,86 @@ import "./ProofreaderEarnings.css";
 const ProofreaderEarnings = () => {
     const [earnings, setEarnings] = useState([]);
     const [payments, setPayments] = useState([]);
+    const [summary, setSummary] = useState({
+        totalTranslated: 0,
+        totalApproved: 0,
+        totalEarnings: 0,
+        totalPaid: 0,
+        totalPending: 0,
+    });
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Dummy earnings data
-        const dummyEarnings = [
-            {
-                customer: "Acme Corp",
-                language: "English → French",
-                totalLabels: 100,
-                translated: 95,
-                approved: 90,
-                rate: 0.5,
-            },
-            {
-                customer: "Globex Inc.",
-                language: "German → English",
-                totalLabels: 75,
-                translated: 70,
-                approved: 65,
-                rate: 0.6,
-            },
-            {
-                customer: "Tech Solutions",
-                language: "English → Spanish",
-                totalLabels: 120,
-                translated: 110,
-                approved: 105,
-                rate: 0.55,
-            },
-        ];
+        const cuid = localStorage.getItem("uuid");
+        if (!cuid) {
+            setError("User ID not found in localStorage.");
+            setLoading(false);
+            return;
+        }
 
-        // Dummy payment history
-        const dummyPayments = [
-            { id: "PAY-001", date: "2025-06-01", amount: 50, status: "PAID" },
-            { id: "PAY-002", date: "2025-06-10", amount: 60, status: "PENDING" },
-            { id: "PAY-003", date: "2025-06-12", amount: 80, status: "PAID" },
-        ];
+        const baseUrl = `http://localhost:8082/api/proofreader/earnings/${cuid}`;
 
-        setEarnings(dummyEarnings);
-        setPayments(dummyPayments);
+        // fetch summary, breakdown, payments in parallel
+        Promise.all([
+            fetch(`${baseUrl}/summary`).then((res) => res.json()),
+            fetch(`${baseUrl}/breakdown`).then((res) => res.json()),
+            fetch(`${baseUrl}/payments`).then((res) => res.json()),
+        ])
+            .then(([summaryRes, breakdownRes, paymentsRes]) => {
+                if (summaryRes.status !== "SUCCESS") {
+                    throw new Error(summaryRes.message || "Failed to load summary");
+                }
+                if (breakdownRes.status !== "SUCCESS") {
+                    throw new Error(breakdownRes.message || "Failed to load breakdown");
+                }
+                if (paymentsRes.status !== "SUCCESS") {
+                    throw new Error(paymentsRes.message || "Failed to load payments");
+                }
+                setSummary(summaryRes.data);
+                setEarnings(breakdownRes.data);
+                setPayments(paymentsRes.data);
+            })
+            .catch((err) => {
+                console.error(err);
+                setError(err.message);
+            })
+            .finally(() => setLoading(false));
     }, []);
 
-    const totalTranslated = earnings.reduce((sum, e) => sum + e.translated, 0);
-    const totalApproved = earnings.reduce((sum, e) => sum + e.approved, 0);
-    const totalEarned = earnings.reduce((sum, e) => sum + e.approved * e.rate, 0);
+    if (loading) {
+        return <div className="earnings-container">Loading your earnings…</div>;
+    }
 
-    const totalPaid = payments
-        .filter((p) => p.status === "PAID")
-        .reduce((sum, p) => sum + p.amount, 0);
-
-    const pendingAmount = totalEarned - totalPaid;
+    if (error) {
+        return <div className="earnings-container error">Error: {error}</div>;
+    }
 
     return (
         <div className="earnings-container">
             <h2>My Earnings</h2>
 
             <div className="summary-cards">
-                <div className="card"><h4>Total Translated</h4><p>{totalTranslated}</p></div>
-                <div className="card"><h4>Total Approved</h4><p>{totalApproved}</p></div>
-                <div className="card"><h4>Total Earnings</h4><p>${totalEarned.toFixed(2)}</p></div>
-                <div className="card"><h4>Paid</h4><p>${totalPaid.toFixed(2)}</p></div>
-                <div className="card pending"><h4>Pending</h4><p>${pendingAmount.toFixed(2)}</p></div>
+                <div className="card">
+                    <h4>Total Translated</h4>
+                    <p>{summary.totalTranslated}</p>
+                </div>
+                <div className="card">
+                    <h4>Total Approved</h4>
+                    <p>{summary.totalApproved}</p>
+                </div>
+                <div className="card">
+                    <h4>Total Earnings</h4>
+                    <p>${summary.totalEarnings.toFixed(2)}</p>
+                </div>
+                <div className="card">
+                    <h4>Paid</h4>
+                    <p>${summary.totalPaid.toFixed(2)}</p>
+                </div>
+                <div className="card pending">
+                    <h4>Pending</h4>
+                    <p>${summary.totalPending.toFixed(2)}</p>
+                </div>
             </div>
 
             <h3>Earnings Breakdown</h3>
@@ -81,8 +100,8 @@ const ProofreaderEarnings = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {earnings.map((entry, index) => (
-                    <tr key={index}>
+                {earnings.map((entry, idx) => (
+                    <tr key={idx}>
                         <td>{entry.customer}</td>
                         <td>{entry.language}</td>
                         <td>{entry.totalLabels}</td>
@@ -92,6 +111,13 @@ const ProofreaderEarnings = () => {
                         <td>${(entry.approved * entry.rate).toFixed(2)}</td>
                     </tr>
                 ))}
+                {earnings.length === 0 && (
+                    <tr>
+                        <td colSpan="7" style={{ textAlign: "center" }}>
+                            No earnings data available.
+                        </td>
+                    </tr>
+                )}
                 </tbody>
             </table>
 
@@ -106,14 +132,26 @@ const ProofreaderEarnings = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {payments.map((payment, index) => (
-                    <tr key={index} className={payment.status === "PENDING" ? "pending-row" : ""}>
+                {payments.map((payment, idx) => (
+                    <tr
+                        key={idx}
+                        className={payment.status === "PENDING" ? "pending-row" : ""}
+                    >
                         <td>{payment.id}</td>
                         <td>{payment.date}</td>
                         <td>${payment.amount.toFixed(2)}</td>
-                        <td className={payment.status.toLowerCase()}>{payment.status}</td>
+                        <td className={payment.status.toLowerCase()}>
+                            {payment.status}
+                        </td>
                     </tr>
                 ))}
+                {payments.length === 0 && (
+                    <tr>
+                        <td colSpan="4" style={{ textAlign: "center" }}>
+                            No payment history available.
+                        </td>
+                    </tr>
+                )}
                 </tbody>
             </table>
         </div>

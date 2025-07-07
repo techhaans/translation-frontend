@@ -59,34 +59,56 @@
         }
       }
 
-      /* new phone wrapper to match your design */
-      .phoneInput {
+      /* combined phone code + number input */
+      .phoneInputGroup {
         display: flex;
+        width: 100%;
         margin-bottom: 1.5em;
+        border: 1px solid #d1d1d1;
+        border-radius: 8px;
+        overflow: hidden;
 
-        select,
-        input {
-          border: 1px solid #d1d1d1;
-          padding: 10px;
-          font-size: 1em;
-          font-family: inherit;
+        /* match your other inputs' height */
+        height: 3rem;
+      }
 
-          &::placeholder {
-            color: #9c9c9c;
-          }
-        }
+      .phoneCode {
+        flex: none;
+        /* we’ll remove vertical padding below and center via flex */
+        padding: 0 10px;
+        font-family: inherit;
+        font-size: 1em;
+        border: none;
+        background-color: #fff;
+        width: 20%;
+        text-align: center;
 
-        select {
-          border-right: none;
-          border-top-left-radius: 8px;
-          border-bottom-left-radius: 8px;
-          width: 20%;
-        }
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        height: 100%;
+      }
 
-        input {
-          border-top-right-radius: 8px;
-          border-bottom-right-radius: 8px;
-          width: 80%;
+      .separator {
+        width: 1px;
+        background-color: #d1d1d1;
+      }
+
+      .phoneNumber {
+        flex: 1;
+        /* remove vertical padding, center via flex */
+        padding: 0 10px;
+        font-family: inherit;
+        font-size: 1em;
+        border: none;
+
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        height: 100%;
+
+        &::placeholder {
+          color: #9c9c9c;
         }
       }
 
@@ -129,4 +151,13 @@
       }
     }
   }
+}
+
+:global(.react-select__control) {
+  border: 1px solid #d1d1d1;
+  border-radius: 8px;
+  min-height: 3rem;
+}
+:global(.react-select__single-value) {
+  font-size: 1em;
 }

@@ -9,7 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false); // <-- NEW
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
@@ -18,38 +18,30 @@ const Login = () => {
       setError('Email is required');
       return false;
     }
-
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError('Enter a valid email address');
       return false;
     }
-
     if (!password) {
       setError('Password is required');
       return false;
     }
-
     if (!role) {
       setError('Please select a role');
       return false;
     }
-
     setError('');
     return true;
   };
 
   const handleLogin = async () => {
     if (!validateForm()) return;
-
-    setLoading(true); // <-- Start loader
+    setLoading(true);
     try {
-      const response = await axios.post('http://api.techhaans.com/api/auth/login', {
-        email,
-        password,
-        role,
+      const response = await axios.post('http://localhost:8082/api/auth/login', {
+        email, password, role,
       });
-
       const { token, fullName, email: userEmail, role: userRole, userId, uuid } = response.data.data;
       localStorage.setItem('token', token);
       localStorage.setItem('fullName', fullName);
@@ -57,18 +49,13 @@ const Login = () => {
       localStorage.setItem('role', userRole);
       localStorage.setItem('userId', userId);
       localStorage.setItem('uuid', uuid ?? '');
-
       login({ token, fullName, email: userEmail, role: userRole, userId });
       navigate('/');
     } catch (err) {
       console.error('Login failed:', err);
-      if (err.response?.data?.message) {
-        setError(err.response.data.message);
-      } else {
-        setError('Invalid credentials or server error');
-      }
+      setError(err.response?.data?.message || 'Invalid credentials or server error');
     } finally {
-      setLoading(false); // <-- Stop loader
+      setLoading(false);
     }
   };
 
@@ -82,7 +69,7 @@ const Login = () => {
               className={Style.logininput}
               placeholder="Email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
           />
 
           <input
@@ -90,13 +77,13 @@ const Login = () => {
               className={Style.logininput}
               placeholder="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
           />
 
           <select
               className={Style.loginselect}
               value={role}
-              onChange={(e) => setRole(e.target.value)}
+              onChange={e => setRole(e.target.value)}
           >
             <option value="">Select Role</option>
             <option value="PROOFREADER">Proofreader</option>
@@ -115,11 +102,16 @@ const Login = () => {
             {loading ? 'Logging in...' : 'Login'}
           </button>
 
+          {/* Forgot password below the button, same styling as signup */}
           <div className={Style.signup}>
-            Don’t have an account? <a href="/#/RegisterCustomerForm">Sign up</a>
+            <a href="/#/ForgotPassword">Forgot password?</a>
           </div>
+
+          {/* Combined sign-up line */}
           <div className={Style.signup}>
-            For ProofReader Registration <a href="/#/RegisterProofreaderForm">Sign up With Proof Reader</a>
+            Don’t have an account?&nbsp;
+            <a href="/#/RegisterCustomerForm">Sign up as Customer</a>&nbsp;or&nbsp;
+            <a href="/#/RegisterProofreaderForm">Sign up as Proofreader</a>
           </div>
         </div>
       </div>

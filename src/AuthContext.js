@@ -1,17 +1,24 @@
-// src/AuthContext.js
-import React, { createContext, useState, useEffect, useRef, useCallback } from "react";
+import React, {
+    createContext,
+    useState,
+    useEffect,
+    useRef,
+    useCallback,
+} from "react";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [userRole, setUserRole] = useState(null); // 'customer', 'proofreader', 'admin', 'superadmin'
-    const logoutTimer = useRef(null);
+    const [userRole, setUserRole] = useState(null); // 'customer', 'proofreader', etc.
+    const [languages, setLanguages] = useState([]);  // ← new state for languages
+    const [langsLoading, setLangsLoading] = useState(true);
+    const [langsError, setLangsError] = useState(null);
 
-    // Duration (in milliseconds) before auto‐logout for inactivity
+    const logoutTimer = useRef(null);
     const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
 
-    // Clear any existing inactivity timer
+    // clear timer util
     const clearLogoutTimer = useCallback(() => {
         if (logoutTimer.current) {
             clearTimeout(logoutTimer.current);
@@ -19,24 +26,37 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-
-    // On mount, check if there’s already a user in localStorage
+    // On mount: restore login and also kick off languages fetch
     useEffect(() => {
+        // restore user
         const user = JSON.parse(localStorage.getItem("user"));
         if (user && user.role) {
             setIsLoggedIn(true);
             setUserRole(user.role);
-        } else {
-            setIsLoggedIn(false);
-            setUserRole(null);
         }
+
+        // fetch languages exactly once
+        const fetchLanguages = async () => {
+            try {
+                const res = await fetch("http://localhost:8082/api/languages/all");
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const body = await res.json();
+                setLanguages(body.data || []);
+            } catch (err) {
+                console.error("Failed to load languages", err);
+                setLangsError(err);
+            } finally {
+                setLangsLoading(false);
+            }
+        };
+
+        fetchLanguages();
     }, []);
 
     const login = (userData) => {
         localStorage.setItem("user", JSON.stringify(userData));
         setIsLoggedIn(true);
         setUserRole(userData.role || null);
-        // Starting the timer also happens via the useEffect that watches isLoggedIn
     };
 
     const logout = useCallback(() => {
@@ -46,53 +66,41 @@ export const AuthProvider = ({ children }) => {
         clearLogoutTimer();
     }, [clearLogoutTimer]);
 
-    // Start (or restart) the inactivity timer
     const startLogoutTimer = useCallback(() => {
         clearLogoutTimer();
-        logoutTimer.current = setTimeout(() => {
-            logout();
-        }, INACTIVITY_LIMIT);
-    }, [clearLogoutTimer,INACTIVITY_LIMIT,logout]);
+        logoutTimer.current = setTimeout(logout, INACTIVITY_LIMIT);
+    }, [clearLogoutTimer, logout,INACTIVITY_LIMIT]);
 
-    // Called whenever user does something “active”
     const handleUserActivity = useCallback(() => {
-        // Only reset the timer if already logged in
-        if (isLoggedIn) {
-            startLogoutTimer();
-        }
+        if (isLoggedIn) startLogoutTimer();
     }, [isLoggedIn, startLogoutTimer]);
 
-    // Set up (and clean up) event listeners for user activities
     useEffect(() => {
         if (isLoggedIn) {
-            // List of DOM events that count as “user activity”
-            const activityEvents = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
-
-            // Attach listeners
-            activityEvents.forEach((eventName) => {
-                window.addEventListener(eventName, handleUserActivity);
-            });
-
-            // (Re)start the timer as soon as we detect login
+            const events = ["mousemove", "mousedown", "keydown", "scroll", "touchstart"];
+            events.forEach((e) => window.addEventListener(e, handleUserActivity));
             startLogoutTimer();
-
-            // Clean up function: remove listeners + clear timer when isLoggedIn changes or on unmount
             return () => {
-                activityEvents.forEach((eventName) => {
-                    window.removeEventListener(eventName, handleUserActivity);
-                });
+                events.forEach((e) => window.removeEventListener(e, handleUserActivity));
                 clearLogoutTimer();
             };
+        } else {
+            clearLogoutTimer();
         }
-
-        // If not logged in, ensure no dangling timer/listeners remain
-        clearLogoutTimer();
-        return undefined;
     }, [isLoggedIn, handleUserActivity, startLogoutTimer, clearLogoutTimer]);
 
-
     return (
-        <AuthContext.Provider value={{ isLoggedIn, userRole, login, logout }}>
+        <AuthContext.Provider
+            value={{
+                isLoggedIn,
+                userRole,
+                login,
+                logout,
+                languages,
+                langsLoading,
+                langsError,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

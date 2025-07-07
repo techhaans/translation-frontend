@@ -25,7 +25,7 @@ const LabelManagement = () => {
             }
 
             const res = await fetch(
-                `http://api.techhaans.com/api/label/customer/${cuid}`
+                `http://localhost:8082/api/label/customer/${cuid}`
             );
 
             if (!res.ok) {

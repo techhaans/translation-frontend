@@ -15,7 +15,7 @@ const ProofreaderTasks = () => {
     const labelsPerPage = 10;
 
     useEffect(() => {
-        fetch("http://api.techhaans.com/api/proofreader/label/tasks/customers")
+        fetch("http://localhost:8082/api/proofreader/label/tasks/customers")
             .then((res) => {
                 if (!res.ok) throw new Error("Failed to fetch customers");
                 return res.json();
@@ -39,7 +39,7 @@ const ProofreaderTasks = () => {
             return;
         }
 
-        const url = `http://api.techhaans.com/api/proofreader/label/tasks/${LABELER_ID}/${selectedCustomer}/lang-pairs`;
+        const url = `http://localhost:8082/api/proofreader/label/tasks/${LABELER_ID}/${selectedCustomer}/lang-pairs`;
         fetch(url)
             .then((res) => {
                 if (!res.ok) throw new Error("Failed to fetch language pairs");

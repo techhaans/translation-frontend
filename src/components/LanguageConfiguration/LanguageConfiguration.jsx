@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import axios from "axios";
 import Select from "react-select";
 import "./LanguageConfiguration.css";
 import {allLanguages} from "../../data-json/allLanguages";
 
 // ─── 2) Build react-select options ─────────────────────────────────────────────
-const languageOptions = allLanguages.map(({ name }) => ({
+const languageOptions = allLanguages.map(({name}) => ({
     value: name,
     label: name,
 }));
@@ -28,8 +28,8 @@ const LanguageConfiguration = () => {
             if (!cuid) return;
 
             try {
-                const { data } = await axios.get(
-                    `http://api.techhaans.com/api/customer_Lang/config/${cuid}`
+                const {data} = await axios.get(
+                    `http://localhost:8082/api/customer_Lang/config/${cuid}`
                 );
                 const {
                     defaultLanguageName,
@@ -112,11 +112,11 @@ const LanguageConfiguration = () => {
         try {
 
             const resp = await axios.post(
-                "http://api.techhaans.com/api/customer_Lang/configure",
+                "http://localhost:8082/api/customer_Lang/configure",
                 payload,
-                { headers: { "Content-Type": "application/json" } }
+                {headers: {"Content-Type": "application/json"}}
             );
-            const { status, message } = resp.data;
+            const {status, message} = resp.data;
 
 
             if (status === "SUCCESS") {
@@ -189,7 +189,7 @@ const LanguageConfiguration = () => {
                     <div className={`status-message ${statusType}`}>
                         {statusMessage}
                         {statusType === "success" && (
-                            <div className="progress-bar" />
+                            <div className="progress-bar"/>
                         )}
                     </div>
                 )}

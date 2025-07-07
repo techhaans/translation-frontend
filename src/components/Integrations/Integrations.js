@@ -50,12 +50,14 @@ const Integrations = () => {
 
     const callIntegrationEndpoint = async (endpoint, payload) => {
         console.log("Payload for", endpoint, payload);
+        const token = localStorage.getItem('token')
         const res = await fetch(
-            `http://api.techhaans.com/api/integration${endpoint}`,
+            `http://localhost:8082/api/integration${endpoint}`,
             {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json","Authorization": `Bearer ${token}` },
                 body: JSON.stringify(payload),
+
             }
         );
         if (!res.ok) {

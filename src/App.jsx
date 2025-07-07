@@ -36,6 +36,7 @@ import ProofreaderTasks from "./components/ProofreaderTasks/ProofreaderTasks";
 import ProofreaderEarnings from "./components/ProofreaderEarnings/ProofreaderEarnings";
 import ProofreaderDashboard from "./components/ProofreaderDashboard/ProofreaderDashboard";
 import AssignTasks from "./components/AssignTasks/AssignTasks";
+import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 function AppContent() {
     const { isLoggedIn, userRole } = useContext(AuthContext);
 
@@ -53,8 +54,8 @@ function AppContent() {
             <React.Suspense fallback={<div>Loading...</div>}>
                 <Routes>
                     {/* Public routes */}
-                    <Route index element={<Home />} />
-                    <Route path="/" element={<Home />} />
+                    <Route index element={<Home />} end/>
+                    {/*<Route path="/" element={<Home />} />*/}
                     <Route path="/Home" element={<Home />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/RegisterCustomerForm" element={<RegisterCustomer />} />
@@ -69,6 +70,7 @@ function AppContent() {
                     <Route path="/Careers" element={<Careers />} />
                     <Route path="/ProofreadersIntro" element={<ProofreadersIntro />} />
                     <Route path="/Clients" element={<Clients />} />
+                    <Route path="/ForgotPassword" element={<ForgotPassword />} />
                     <Route path="/ProofreaderProfile" element={<ProofreaderProfile />} />
                     <Route path="/ProofreaderTasks" element={<ProofreaderTasks />} />
                     <Route path="/ProofreaderEarnings" element={<ProofreaderEarnings />} />

@@ -1,53 +1,66 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, {
+    useState,
+    useEffect,
+    useCallback,
+    useMemo,
+    useContext,
+} from "react";
 import axios from "axios";
 import Select from "react-select";
 import "./ProofreaderProfile.css";
-import { allLanguages } from "../../data-json/allLanguages";
+import { AuthContext } from "../../AuthContext";
 
 const ProofreaderProfile = () => {
+    const { languages, langsLoading, langsError } = useContext(AuthContext);
+
     const [profile, setProfile] = useState({
         fullName: "",
         email: "",
         phone: "",
         supportedLanguages: [],
         status: "",
-        registrationDate: ""
+        registrationDate: "",
     });
     const [errors, setErrors] = useState({});
     const [saving, setSaving] = useState(false);
     const [statusMessage, setStatusMessage] = useState("");
     const [statusType, setStatusType] = useState(""); // "info"|"success"|"error"
 
-    const languageOptions = useMemo(
-        () =>
-            allLanguages.map(({ name }) => ({
-                value: name,
-                label: name
-            })),
-        []
-    );
+    // build react-select options from context.languages
+    const languageOptions = useMemo(() => {
+        return languages.map((lang) => ({
+            value: lang.languageCode,
+            label: lang.languageName,
+        }));
+    }, [languages]);
 
     const fetchProfile = useCallback(async () => {
         const uuid = localStorage.getItem("uuid");
         if (!uuid) return;
+
         try {
             const { data: resp } = await axios.get(
-                `http://api.techhaans.com/api/proofreader/profile/${uuid}`
+                `http://localhost:8082/api/proofreader/profile/${uuid}`
             );
             const d = resp.data;
+
             setProfile({
                 fullName: d.fullName || "",
                 email: d.email || "",
                 phone: d.phoneNumber || "",
                 supportedLanguages: Array.isArray(d.supportedLang)
-                    ? d.supportedLang.map((lang) => ({ value: lang, label: lang }))
+                    ? d.supportedLang.map((code) => {
+                        // find matching label in context.languages
+                        const match = languages.find((l) => l.languageCode === code);
+                        return { value: code, label: match?.languageName || code };
+                    })
                     : [],
                 status: d.status || "ACTIVE",
                 registrationDate: d.registerDate
                     ? new Date(d.registerDate).toLocaleString()
-                    : ""
+                    : "",
             });
-            // ← WRITE fullName into localStorage
+
             if (d.fullName) {
                 localStorage.setItem("fullName", d.fullName);
             }
@@ -56,7 +69,7 @@ const ProofreaderProfile = () => {
             setStatusType("error");
             setStatusMessage("❌ Could not load your profile.");
         }
-    }, []);
+    }, [languages]);
 
     useEffect(() => {
         fetchProfile();
@@ -80,7 +93,7 @@ const ProofreaderProfile = () => {
     const handleLanguagesChange = (selected) => {
         setProfile((p) => ({
             ...p,
-            supportedLanguages: selected || []
+            supportedLanguages: selected || [],
         }));
     };
 
@@ -100,18 +113,18 @@ const ProofreaderProfile = () => {
             const payload = {
                 fullName: profile.fullName,
                 phoneNumber: profile.phone,
-                supportedLanguages: profile.supportedLanguages.map((o) => o.value)
+                supportedLanguages: profile.supportedLanguages.map((o) => o.value),
             };
 
             await axios.put(
-                `http://api.techhaans.com/api/proofreader/profile/update/${uuid}`,
+                `http://localhost:8082/api/proofreader/profile/update/${uuid}`,
                 payload,
                 { headers: { "Content-Type": "application/json" } }
             );
-            // ← UPDATE localStorage on success
-            localStorage.setItem("fullName", profile.fullName);
 
+            localStorage.setItem("fullName", profile.fullName);
             await fetchProfile();
+
             setStatusType("success");
             setStatusMessage("✅ Profile updated successfully!");
             setTimeout(() => setStatusMessage(""), 3000);
@@ -127,6 +140,12 @@ const ProofreaderProfile = () => {
     return (
         <div className="proofreader-container">
             <h2>Proofreader Profile</h2>
+
+            {langsLoading && <p>Loading languages…</p>}
+            {langsError && (
+                <p className="error">Error loading available languages</p>
+            )}
+
             <form
                 className="proofreader-form"
                 onSubmit={(e) => {
@@ -172,6 +191,7 @@ const ProofreaderProfile = () => {
                         onChange={handleLanguagesChange}
                         classNamePrefix="react-select"
                         placeholder="Select one or more…"
+                        isDisabled={langsLoading || !!langsError}
                     />
                     {errors.supportedLanguages && (
                         <span className="error">{errors.supportedLanguages}</span>
@@ -180,7 +200,12 @@ const ProofreaderProfile = () => {
 
                 <label>
                     Status:
-                    <select id="status" value={profile.status} onChange={handleChange} disabled>
+                    <select
+                        id="status"
+                        value={profile.status}
+                        onChange={handleChange}
+                        disabled
+                    >
                         <option value="ACTIVE">Active</option>
                         <option value="SUSPENDED">Suspended</option>
                         <option value="AVAILABLE">Available</option>
