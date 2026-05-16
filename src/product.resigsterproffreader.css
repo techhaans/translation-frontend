@@ -1,0 +1,76 @@
+/* product.resigsterproffreader.css */
+
+.proof-form-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.proof-form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.proof-form-container form {
+  display: flex;
+  flex-direction: column;
+}
+.countrydrop{
+  width: 100%;
+  padding: 15px 14px;
+  margin: 10px 0;
+  font-size: 16px;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background: transparent;
+  transition: border-color 0.3s;
+}
+.countrydrop
+{
+  appearance: none;
+  background-color: transparent;
+  
+}
+.countrydrop focus{
+  outline: none;
+  border-color: #4e54c8;
+}
+.proof-form-container input,
+.proof-form-container select {
+  margin-bottom: 15px;
+  padding: 10px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.proof-form-container input:focus,
+.proof-form-container select:focus {
+  border-color: #4a90e2;
+  outline: none;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+}
+
+.proof-form-container select[multiple] {
+  height: 100px;
+}
+
+.proof-form-container button {
+  padding: 12px;
+  font-size: 16px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.proof-form-container button:hover {
+  background-color: #357abd;
+}

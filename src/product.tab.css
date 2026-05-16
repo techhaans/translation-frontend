@@ -1,0 +1,30 @@
+.tabs-container {
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .tab-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tab-header button {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    background-color: #eee;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .tab-header button.active {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .tab-content {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  
