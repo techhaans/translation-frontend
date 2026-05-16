@@ -1,0 +1,42 @@
+{
+  "resume": {
+    "name": "RAVICHANDRA",
+    "email": "ravichandra92@gmail.com",
+    "phone": "7204458851",
+    "linkedin": "linkedin.com/in/lakkireddy-ravichandra9a0387253",
+
+    "profile": "As a passionate and motivated Electronics and Communication Engineering, I aim to begin my professional journey in a dynamic organization where I can apply my technical knowledge in electronics, communication systems, and embedded technologies.",
+
+    "education": [
+      "Diploma ECE – Government Polytechnic Nellore (CGPA 7.5)",
+      "SSC – Narayana E.M High School (GPA 9.0)"
+    ],
+
+    "experience": "Internship at NSIC Technical Services Centre, Hyderabad (Automation of Process Temperature using Arduino)",
+
+    "technicalSkills": [
+      "VLSI-PD",
+      "Digital Electronics",
+      "Embedded Systems",
+      "MPMC"
+    ],
+
+    "projects": [
+      "Integrated monitoring system for ammonia and H2S gas emission using Deep Learning",
+      "Smart irrigation system using Arduino"
+    ],
+
+    "certificates": [
+      "Machine Learning with Python (IBM)",
+      "Naan Mudhalvan Powering IoT",
+      "PCB Designing Certificate"
+    ],
+
+    "softSkills": [
+      "Communication",
+      "Problem Solving",
+      "Consistency",
+      "Project Management"
+    ]
+  }
+}

@@ -1,0 +1,168 @@
+/* ===============================
+   PAGE
+================================ */
+body {
+  background: #f4f7fb;
+  font-family: "Segoe UI", sans-serif;
+}
+
+/* ===============================
+   CARD
+================================ */
+.project-card {
+  max-width: 1000px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ===============================
+   HEADER
+================================ */
+.project-card h2 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.customer-id {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+/* ===============================
+   TABLE WRAPPER
+================================ */
+.table-wrapper {
+  max-height: 450px;
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+/* ===============================
+   TABLE
+================================ */
+.project-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 750px;
+}
+
+/* ===============================
+   STICKY HEADER
+================================ */
+.project-table thead th {
+  position: sticky;
+  top: 0;
+  background: #f1f5f9;
+  padding: 14px;
+  font-size: 14px;
+  text-align: left;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 2;
+}
+
+/* ===============================
+   ROWS
+================================ */
+.project-table tbody tr {
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.project-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+/* ===============================
+   CELLS
+================================ */
+.project-table td {
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* ===============================
+   INPUT
+================================ */
+.project-table input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+.btn {
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.btn.edit {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.btn.save {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn.cancel {
+  background: #ef4444;
+  color: #fff;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* ===============================
+   EMPTY STATE
+================================ */
+.empty-row {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+}
+
+/* ===============================
+   LOADING
+================================ */
+.loading {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 16px;
+  color: #555;
+}
+
+/* ===============================
+   SCROLLBAR (OPTIONAL)
+================================ */
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
